@@ -12,18 +12,12 @@ http://www.webupd8.org/2013/10/system-wide-pulseaudio-equalizer.html
 
 https://aur.archlinux.org/packages/pulseaudio-equalizer-ladspa/
 
-Since development has stalled, the GUI isn't launching and the locally created config-files are getting messed up (the options appear twice) - equalizerrc, equalizerrc.availablepresets - even when forcing python via
 
-export EPYTHON=python2.7
+Much thanks to kabili207 gtk+ 3 and python 3 are now supported:
 
-it still errors out ...
+"Support for both was added by using pygtkcompat. Minimal changes
+were required to allow this.
 
-
-Currently I'm enabling it via
-
-pulseaudio-equalizer toggle
-
-and
-
-having a pre-set preset option in pulseaudio-equalizer
-(e.g. PA_CURRENT_PRESET="Club.preset")
+The source code was also run through a formatter to correct the
+heavy mix of tabs and spaces. I have no idea how it even ran with
+such inconsistent indentation."
