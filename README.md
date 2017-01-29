@@ -21,3 +21,8 @@ were required to allow this.
 The source code was also run through a formatter to correct the
 heavy mix of tabs and spaces. I have no idea how it even ran with
 such inconsistent indentation."
+
+In version 4.0 the following was fixed: the involuntary volume raise issue,
+volume detection and implementation of --color=never for grep.
+
+Thanks again to kabili207 :)
