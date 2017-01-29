@@ -109,7 +109,7 @@ fi
 # Get sink names and volumes
 PA_LADSPA_SINK="ladspa_output.$PA_LADSPA_PLUGIN.$PA_LADSPA_LABEL"
 PA_CURRENT_SINK=$(pacmd stat | grep --color=never "Default sink name" | sed 's/Default sink name: //g')
-PA_CURRENT_VOLUME=$(pacmd list | grep --color=never -A20 "<$PA_CURRENT_SINK>" | grep --color=never -m1 'volume: 0:' | awk '{print $NF}' | sed 's/%//g')
+PA_CURRENT_VOLUME=$(pacmd list | grep --color=never -A20 "<$PA_CURRENT_SINK>" | grep --color=never -m1 'volume: ' | grep --color=never -Po '(\d+)%' | awk 'NR==1{sub(/%/,"",$1); print $1}')
 PA_REAL_VOLUME=$((PA_CURRENT_VOLUME*65536/100))
 PA_REAL_PREAMP_FLOAT=$(echo "$PA_PREAMP*65536" | bc)
 PA_REAL_PREAMP=${PA_REAL_PREAMP_FLOAT/\.*}
