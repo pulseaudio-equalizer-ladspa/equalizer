@@ -108,20 +108,20 @@ fi
 
 # Get sink names and volumes
 PA_LADSPA_SINK="ladspa_output.$PA_LADSPA_PLUGIN.$PA_LADSPA_LABEL"
-PA_CURRENT_SINK=$(pacmd stat | grep "Default sink name" | sed 's/Default sink name: //g')
-PA_CURRENT_VOLUME=$(pacmd list | grep -A20 "<$PA_CURRENT_SINK>" | grep -m1 'volume: 0:' | awk '{print $NF}' | sed 's/%//g')
+PA_CURRENT_SINK=$(pacmd stat | grep --color=never "Default sink name" | sed 's/Default sink name: //g')
+PA_CURRENT_VOLUME=$(pacmd list | grep --color=never -A20 "<$PA_CURRENT_SINK>" | grep --color=never -m1 'volume: 0:' | awk '{print $NF}' | sed 's/%//g')
 PA_REAL_VOLUME=$((PA_CURRENT_VOLUME*65536/100))
 PA_REAL_PREAMP_FLOAT=$(echo "$PA_PREAMP*65536" | bc)
 PA_REAL_PREAMP=${PA_REAL_PREAMP_FLOAT/\.*}
-PA_CURRENT_MUTE=$(pacmd list-sinks | grep -A20 "<$PA_CURRENT_SINK>" | grep -m1 'muted: ' | sed 's/[\t]muted: no/0/g' | sed 's/[\t]muted: yes/1/g')
+PA_CURRENT_MUTE=$(pacmd list-sinks | grep --color=never -A20 "<$PA_CURRENT_SINK>" | grep -m1 'muted: ' | sed 's/[\t]muted: no/0/g' | sed 's/[\t]muted: yes/1/g')
 
 # Check if equalizer is running and get accurate master sink name
 if [ "$PA_CURRENT_SINK" = "$PA_LADSPA_SINK" ]; then
   PA_EQUALIZER_STATUS=1
-  PA_MASTER_SINK=$(pacmd info | grep -A30 "<$PA_CURRENT_SINK>" | grep -m1 'device.master_device = ' | sed 's/device.master_device = //g' | sed 's/"//g' | sed 's/^[ \t]*//')
+  PA_MASTER_SINK=$(pacmd info | grep --color=never -A30 "<$PA_CURRENT_SINK>" | grep --color=never -m1 'device.master_device = ' | sed 's/device.master_device = //g' | sed 's/"//g' | sed 's/^[ \t]*//')
 else
   PA_EQUALIZER_STATUS=0
-  PA_MASTER_SINK=$(pacmd stat | grep 'Default sink name' | sed 's/Default sink name: //g')
+  PA_MASTER_SINK=$(pacmd stat | grep --color=never 'Default sink name' | sed 's/Default sink name: //g')
 fi
 
 # Check if equalizer is set as persistent
