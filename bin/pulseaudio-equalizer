@@ -286,12 +286,14 @@ if [ "$1" = "enable-config" ]; then
   echo "" >>$HOME/.config/pulse/default.pa
   echo "### BEGIN: Equalized audio configuration" >>$HOME/.config/pulse/default.pa
   echo "### Generated from: $SCRIPT_NAME" >>$HOME/.config/pulse/default.pa
-  echo "load-module module-ladspa-sink sink_name=$PA_LADSPA_SINK master=$PA_MASTER_SINK plugin=$PA_LADSPA_PLUGIN label=$PA_LADSPA_LABEL control=$PA_LADSPA_CONTROLS" >>$HOME/.config/pulse/default.pa
+  echo ".nofail" >>$HOME/.config/pulse/default.pa
+  echo "load-module module-ladspa-sink sink_name=$PA_LADSPA_SINK sink_master=$PA_MASTER_SINK plugin=$PA_LADSPA_PLUGIN label=$PA_LADSPA_LABEL control=$PA_LADSPA_CONTROLS" >>$HOME/.config/pulse/default.pa
 
   # Set LADSPA sink as default sink & set appropriate master sink (preamp) volume
   echo "set-default-sink $PA_LADSPA_SINK" >>$HOME/.config/pulse/default.pa
   #echo "set-sink-volume $PA_MASTER_SINK $PA_REAL_PREAMP" >>$HOME/.config/pulse/default.pa
   echo "set-sink-mute $PA_MASTER_SINK 0" >>$HOME/.config/pulse/default.pa
+  echo ".endif" >>$HOME/.config/pulse/default.pa
   echo "### END: Equalized audio configuration" >>$HOME/.config/pulse/default.pa
 
   echo "Equalizer setting saved (enable-config)."
