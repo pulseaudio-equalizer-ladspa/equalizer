@@ -24,8 +24,6 @@ md5sums=(
   'SKIP'
 )
 
-build() {}
-
 package() {
   echo "$pkgdir"
   cd "$srcdir/pulseaudio-equalizer-ladspa-ffy00"
