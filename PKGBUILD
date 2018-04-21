@@ -7,7 +7,7 @@ arch=(any)
 url="https://github.com/FFY00/pulseaudio-equalizer-ladspa"
 license=('GPL3')
 groups=()
-depends=('pygtk' 'swh-plugins' 'gnome-icon-theme' 'pulseaudio' 'bc')
+depends=('pygtk' 'swh-plugins' 'gnome-icon-theme' 'pulseaudio' 'bc' 'python2-gobject')
 makedepends=('git')
 provides=()
 conflicts=('pulseaudio-equalizer-ladspa')
@@ -27,7 +27,8 @@ md5sums=(
 package() {
   echo "$pkgdir"
   cd "$srcdir/pulseaudio-equalizer-ladspa-ffy00"
-  cp -rfp equalizerrc "$pkgdir"
-  cp -rfp share "$pkgdir"
-  cp -rfp bin "$pkgdir"
+  mkdir "$pkgdir/usr"
+  cp -rfp equalizerrc "$pkgdir/usr/"
+  cp -rfp share "$pkgdir/usr/"
+  cp -rfp bin "$pkgdir/usr/"
 }
