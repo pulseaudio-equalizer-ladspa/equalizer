@@ -467,6 +467,8 @@ class Equalizer:
     def on_importpreset(self, widget):
         global preset
         global presets
+        global rawpresets
+
         dialog = gtk.FileChooserDialog('Import Preset...',
                 None, gtk.FILE_CHOOSER_ACTION_OPEN, (gtk.STOCK_CANCEL,
                 gtk.RESPONSE_CANCEL, gtk.STOCK_OK, gtk.RESPONSE_OK))
@@ -485,7 +487,32 @@ class Equalizer:
             path_and_name = os.path.split(filename)
             name = path_and_name[1]
 
-            print(path_and_name)
+            print('Importing preset:',path_and_name)
+
+            if os.path.isfile(path_and_name[0] + '/' + path_and_name[1]):
+                f = open(path_and_name[0] + '/' + path_and_name[1], 'r')
+                rawdata = f.read().split('\n')
+                f.close
+
+                if rawdata[0] == "mbeq_1197"  and rawdata[1] == "mbeq" and rawdata[2] == "Multiband EQ" :
+                    os.system('cp -f "'+path_and_name[0] + '/' + path_and_name[1] + '" ' +presetdir1 )
+                    print("Preset imported successfully.")
+
+                    # Refresh (and therefore, sort) preset list
+                    GetSettings()
+
+                    # Repopulate preset list into ComboBox
+                    model1 = presetsbox1.get_model()
+                    presetsbox1.set_model(None)
+                    model1.clear()
+                    print(rawpresets)
+                    boxindex = 0
+                    for i in range(len(rawpresets)):
+                        model1.append( [rawpresets[i]] )
+                        if rawpresets[i] == rawdata[4]:
+                            boxindex = i
+                    presetsbox1.set_model(model1)
+                    presetsbox1.set_active(boxindex)
 
         dialog.destroy()
 
@@ -511,11 +538,12 @@ class Equalizer:
             
             print('Export to: ',path_and_name)
 
+            # Verify filename has a .preset extension
             name = path_and_name[1]
             if not '.preset' in path_and_name[1] :
                 name = path_and_name[1] + '.preset'
                 
-
+            # Save current configration to export as a .preset file
             f = open(path_and_name[0] + '/' + name , 'w')
 
             del rawdata[:]

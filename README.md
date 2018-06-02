@@ -7,12 +7,14 @@ This equalizer clearly is more potent than the (deprecated ?), optional one from
   * Add more presets (useful presets, ex. Bass Boost)
   * Enhaced Save Preset
   * Add Export preset 
+  * Add Import presets
 
 ## Todo
 
-  * Add Import presets
   * About dialog
 
 ### Original Sources
+
 https://code.launchpad.net/~psyke83/+junk/pulseaudio-equalizer
+
 https://github.com/jjo/config/tree/master/.pulse
