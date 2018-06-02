@@ -5,6 +5,13 @@ This equalizer clearly is more potent than the (deprecated ?), optional one from
 ## Differences
   * Add a failcheck when the equalizer sink is loaded
   * Add more presets (useful presets, ex. Bass Boost)
+  * Enhaced Save Preset
+  * Add Export preset 
+
+## Todo
+
+  * Add Import presets
+  * About dialog
 
 ### Original Sources
 https://code.launchpad.net/~psyke83/+junk/pulseaudio-equalizer
