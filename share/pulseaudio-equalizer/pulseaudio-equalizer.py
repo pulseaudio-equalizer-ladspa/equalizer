@@ -24,6 +24,7 @@ if pygtkcompat is not None:
 import gtk
 import gobject
 import os
+from gi.repository import GdkPixbuf
 
 configdir = os.getenv('HOME') + '/.config/pulse'
 eqconfig = configdir + '/equalizerrc'
@@ -161,6 +162,37 @@ def FormatLabels(x):
     if len(c) < 2 and len(suffix) == 3:
         whitespace1 = '  '
 
+class AboutDialog(gtk.AboutDialog):
+    def __init__(self):
+
+        logoPath = '/usr/share/pulseaudio-equalizer/pulseaudio-equalizer-logo.png'
+
+        gtk.AboutDialog.__init__(self)
+        self.set_title("AboutDialog")
+        self.set_program_name("Pulseaudio Equalizer")
+        self.set_version("2.7.2")
+        self.set_comments("A LADSPA based multiband equalizer for getting better sound out of pulseaudio")
+        self.set_website("https://github.com/larmedina75/pulseaudio-equalizer-ladspa")
+        self.set_website_label("github.com")
+        self.set_authors(["Luis Armando Medina https://github.com/larmedina75","Filipe Laíns https://github.com/FFY00", "Conn O Griofa https://launchpad.net/~psyke83", "JuanJo Ciarlante https://github.com/jjo"])
+        
+        self.connect("response", self.on_response)
+        logo = ''
+        icon_theme = gtk.icon_theme_get_default()
+        if os.path.isfile(logoPath):
+            logo = GdkPixbuf.Pixbuf.new_from_file_at_size(logoPath, 64, 64)
+        elif icon_theme.has_icon('multimedia-volume-control'):
+            logo = icon_theme.load_icon('multimedia-volume-control', 64, 0)
+        elif icon_theme.has_icon('gnome-volume-control'):
+            logo = icon_theme.load_icon('gnome-volume-control', 64, 0)
+        elif icon_theme.has_icon('stock_volume'):
+            logo = icon_theme.load_icon('stock_volume', 64, 0)
+        else:
+            print('No icon found, window will be iconless')
+        self.set_logo(logo)
+
+    def on_response(self, dialog, response):
+        self.destroy()
 
 class Equalizer:
 
@@ -565,7 +597,8 @@ class Equalizer:
         dialog.destroy()
 
     def on_aboutdialog(self, widget):
-        pass
+        aboutdialog = AboutDialog()
+        aboutdialog.run()
 
     def destroy_equalizer(self, widget, data=None):
         gtk.main_quit()
