@@ -5,9 +5,9 @@ This equalizer clearly is more potent than the (deprecated ?), optional one from
 ## Differences
   * Add a failcheck when the equalizer sink is loaded
   * Add more presets (useful presets, ex. Bass Boost)
-  * Enhaced Save Preset
+  * Enhanced Save Preset
   * Add Export preset 
-  * Add Import presets
+  * Add Import preset
 
 ## Todo
 
