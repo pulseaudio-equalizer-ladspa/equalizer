@@ -8,10 +8,12 @@ This equalizer clearly is more potent than the (deprecated ?), optional one from
   * Enhanced Save Preset
   * Add Export preset 
   * Add Import preset
+  * About dialog and credits
 
 ## Todo
 
-  * About dialog
+  * drag and drop .preset files
+  * Expot all user presets
 
 ### Original Sources
 
