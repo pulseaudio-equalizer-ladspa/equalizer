@@ -853,8 +853,6 @@ class Equalizer:
 
         savepreset.connect('clicked', self.on_savepreset)
         
-        #entrypreset.show()
-        #savepreset.show()
         savepreset.hide()
         entrypreset.hide()
         presetsbox1.show()        
@@ -894,9 +892,9 @@ class Equalizer:
         quitbutton.set_property("width-request", 230)
         quitbutton.show()
 
-        separator = gtk.HSeparator()
-        vbox2.pack_start(separator, False, False, 0)
-        separator.set_size_request(130, 10)
+        #separator = gtk.HSeparator()
+        #vbox2.pack_start(separator, False, False, 0)
+        #separator.set_size_request(130, 10)
         # separator.show()
 
         self.window.show()
