@@ -24,7 +24,8 @@ if pygtkcompat is not None:
 import gtk
 import gobject
 import os
-from gi.repository import GdkPixbuf
+from urllib.request import url2pathname, urlparse, unquote
+from gi.repository import GdkPixbuf, Gdk
 
 configdir = os.getenv('HOME') + '/.config/pulse'
 eqconfig = configdir + '/equalizerrc'
@@ -33,6 +34,7 @@ eqpresets = eqconfig + '.availablepresets'
 presetdir1 = configdir + '/presets'
 presetdir2 = '/usr/share/pulseaudio-equalizer/presets'
 
+TARGET_TYPE_URI_LIST = 80
 
 def GetSettings():
     global rawdata
@@ -228,7 +230,9 @@ class Equalizer:
         global entrypreset
         global savebutton
 
-        #preset = presetsbox.get_child().get_text()
+        # keep the curren preset
+        current_preset = preset
+
         preset = ""
         tree_iter = presetsbox1.get_active_iter()
 
@@ -241,7 +245,8 @@ class Equalizer:
         presetmatch = ''
         boxindex = -1
         for i in range(len(rawpresets)):
-            if rawpresets[i] == preset:
+            # Check the selected preset but avoid configuring pulseaudio equalizer if it is the current preset
+            if rawpresets[i] == preset and preset != current_preset:
                 print('Match!', preset )
                 presetmatch = 1
                 boxindex = i
@@ -282,7 +287,6 @@ class Equalizer:
             # Set preset again due to interference from scale modifications
             preset = str(rawdata[4])
             clearpreset = 1
-            #presetsbox.get_child().set_text(preset)
             ApplySettings()
 
             #Disable Save Preset Button (Current config already saved)
@@ -367,10 +371,6 @@ class Equalizer:
                 f.write(str(i) + '\n')
             f.close()
 
-            # Clear preset list from ComboBox
-            #for i in range(len(rawpresets)):
-            #    presetsbox.remove_text(0)
-
             # Clear text from EntryBox and clear list from ComboBox
             entrypreset.set_text("")
             entrypreset.hide()
@@ -449,7 +449,6 @@ class Equalizer:
             os.remove(filename)
 
             # Make a note of the current preset, then clear it temporarily
-            #preset = presetsbox.get_child().get_text()
             tree_iter = presetsbox1.get_active_iter()
 
             if tree_iter is not None:
@@ -458,12 +457,9 @@ class Equalizer:
 
             realpreset = preset
             preset = ''
-            #presetsbox.get_child().set_text('')
             presetsbox1.set_active(-1)
 
             # Clear preset list from ComboBox
-            #for i in range(len(rawpresets)):
-            #    presetsbox1.remove_text(0)
             model1 = presetsbox1.get_model()
             presetsbox1.set_model(None)
             model1.clear()
@@ -477,12 +473,7 @@ class Equalizer:
             else:
                 preset = realpreset
 
-            # Restore preset
-            #presetsbox.get_child().set_text(preset)
-
             # Repopulate preset list into ComboBox
-            #for i in range(len(rawpresets)):
-            #    presetsbox.append_text(rawpresets[i])
             boxindex = 0
             for i in range(len(rawpresets)):
                 model1.append( [rawpresets[i]] )
@@ -600,6 +591,50 @@ class Equalizer:
         aboutdialog = AboutDialog()
         aboutdialog.run()
 
+    def on_drag_data_received(self, widget, context, x, y, selection, target_type, timestamp):
+        global preset
+        global presetsbox1
+        global rawpresets
+
+        if target_type == TARGET_TYPE_URI_LIST:
+            uris =  selection.get_uris()
+            print( 'uris', uris ) 
+             
+            for uri in uris:
+                varPathRaw = urlparse(uri).path
+                varPathDecode = unquote(varPathRaw)
+
+                if os.path.isfile(varPathDecode): # is it file?
+                    print('opening file ',varPathDecode)
+                    f = open(varPathDecode, 'r')
+                    rawdata = f.read().split('\n')
+                    f.close
+                    print(rawdata) 
+
+                    if rawdata[0] == "mbeq_1197"  and rawdata[1] == "mbeq" and rawdata[2] == "Multiband EQ" :
+                        os.system('cp -f "' + varPathDecode + '" ' + presetdir1 )
+                        print("Preset imported successfully.")
+
+                else:
+                    print('file ',varPathDecode,'not found')
+
+            # Refresh (and therefore, sort) preset list
+            current_preset = preset
+            GetSettings()
+
+            # Repopulate preset list into ComboBox
+            model1 = presetsbox1.get_model()
+            presetsbox1.set_model(None)
+            model1.clear()
+            
+            boxindex = 0
+            for i in range(len(rawpresets)):
+                model1.append( [rawpresets[i]] )
+                if rawpresets[i] == current_preset:
+                    boxindex = i
+            presetsbox1.set_model(model1)
+            presetsbox1.set_active(boxindex)
+
     def destroy_equalizer(self, widget, data=None):
         gtk.main_quit()
 
@@ -614,6 +649,12 @@ class Equalizer:
         self.window.set_resizable(True)
 
         self.window.connect('destroy', self.destroy_equalizer)
+        self.window.connect('drag_data_received', self.on_drag_data_received)
+
+        self.window.drag_dest_set( gtk.DestDefaults.MOTION|
+                  gtk.DestDefaults.HIGHLIGHT | gtk.DestDefaults.DROP,
+                  [gtk.TargetEntry.new("text/uri-list", 0, 80)], Gdk.DragAction.COPY)
+
         self.window.set_title(windowtitle + ' [' + realstatus + ']')
         self.window.set_border_width(0)
 
