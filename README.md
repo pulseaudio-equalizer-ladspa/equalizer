@@ -9,10 +9,10 @@ This equalizer clearly is more potent than the (deprecated ?), optional one from
   * Add Export preset 
   * Add Import preset
   * About dialog and credits
+  * Enabled import presets by drag and drop a .preset files
 
 ## Todo
 
-  * drag and drop .preset files
   * Expot all user presets
 
 ### Original Sources
