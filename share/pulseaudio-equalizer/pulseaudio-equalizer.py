@@ -413,7 +413,7 @@ class Equalizer:
         self.window.add(vbox1)
         vbox1.show()
         menu_bar = gtk.MenuBar()
-        vbox1.pack_start(menu_bar, False, False, 2)
+        vbox1.pack_start(menu_bar, False, False, 0)
         menu_bar.show()
         menu_bar.append(root_menu)
 
