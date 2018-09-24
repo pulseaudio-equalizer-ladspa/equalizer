@@ -373,7 +373,7 @@ class Equalizer:
     def __init__(self):
         GetSettings()
 
-        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.window = gtk.Window(type=gtk.WINDOW_TOPLEVEL)
         self.window.set_resizable(True)
 
         self.window.connect('destroy', self.destroy_equalizer)
@@ -397,19 +397,19 @@ class Equalizer:
 
         menu = gtk.Menu()
 
-        menu_item = gtk.MenuItem('Reset to defaults')
+        menu_item = gtk.MenuItem(label='Reset to defaults')
         menu_item.connect('activate', self.on_resetsettings)
         menu.append(menu_item)
         menu_item.show()
-        menu_item = gtk.MenuItem('Remove user preset...')
+        menu_item = gtk.MenuItem(label='Remove user preset...')
         menu_item.connect('activate', self.on_removepreset)
         menu.append(menu_item)
         menu_item.show()
-        root_menu = gtk.MenuItem('Advanced')
+        root_menu = gtk.MenuItem(label='Advanced')
         root_menu.show()
         root_menu.set_submenu(menu)
 
-        vbox1 = gtk.VBox(False, 0)
+        vbox1 = gtk.VBox()
         self.window.add(vbox1)
         vbox1.show()
         menu_bar = gtk.MenuBar()
@@ -417,12 +417,12 @@ class Equalizer:
         menu_bar.show()
         menu_bar.append(root_menu)
 
-        hbox1 = gtk.HBox(False, 1)
+        hbox1 = gtk.HBox(homogeneous=False, spacing=1)
         #hbox1.set_border_width(10)
         vbox1.add(hbox1)
         hbox1.show()
 
-        table = gtk.Table(3, 17, False)
+        table = gtk.Table(n_rows=3, n_columns=17)
         table.set_border_width(5)
         hbox1.add(table)
 
@@ -488,7 +488,7 @@ class Equalizer:
 
         table.show()
 
-        vbox2 = gtk.VBox(True, 1)
+        vbox2 = gtk.VBox(homogeneous=True, spacing=1)
         vbox2.set_border_width(10)
         hbox1.add(vbox2)
         vbox2.show()
@@ -509,13 +509,13 @@ class Equalizer:
         presetsbox.connect('changed', self.on_presetsbox, x)
         presetsbox.show()
 
-        savepreset = gtk.Button('Save Preset')
+        savepreset = gtk.Button(label='Save Preset')
         vbox2.pack_start(savepreset, False, False, 0)
         savepreset.connect('clicked', self.on_savepreset)
         savepreset.show()
 
         global eqenabled
-        eqenabled = gtk.CheckButton('EQ Enabled')
+        eqenabled = gtk.CheckButton(label='EQ Enabled')
         eqenabled.set_active(status)
         #eqenabled.unset_flags(gtk.CAN_FOCUS)
         eqenabled.connect('clicked', self.on_eqenabled)
@@ -523,19 +523,19 @@ class Equalizer:
         eqenabled.show()
 
         global keepsettings
-        keepsettings = gtk.CheckButton('Keep Settings')
+        keepsettings = gtk.CheckButton(label='Keep Settings')
         keepsettings.set_active(persistence)
         #keepsettings.unset_flags(gtk.CAN_FOCUS)
         keepsettings.connect('clicked', self.on_keepsettings)
         vbox2.pack_start(keepsettings, False, False, 0)
         keepsettings.show()
 
-        applysettings = gtk.Button('Apply Settings')
+        applysettings = gtk.Button(label='Apply Settings')
         vbox2.pack_start(applysettings, False, False, 0)
         applysettings.connect('clicked', self.on_applysettings)
         applysettings.show()
 
-        quitbutton = gtk.Button('Quit')
+        quitbutton = gtk.Button(label='Quit')
         vbox2.pack_start(quitbutton, False, False, 0)
         quitbutton.connect('clicked', lambda w: gtk.main_quit())
         quitbutton.show()
