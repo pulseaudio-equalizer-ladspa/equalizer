@@ -397,7 +397,7 @@ class Equalizer:
         root_menu.show()
         root_menu.set_submenu(menu)
 
-        vbox1 = Gtk.VBox()
+        vbox1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.window.add(vbox1)
         vbox1.show()
         menu_bar = Gtk.MenuBar()
@@ -405,19 +405,20 @@ class Equalizer:
         menu_bar.show()
         menu_bar.append(root_menu)
 
-        hbox1 = Gtk.HBox(homogeneous=False, spacing=1)
+        hbox1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,
+                        homogeneous=False, spacing=1, vexpand=True)
         #hbox1.set_border_width(10)
         vbox1.add(hbox1)
         hbox1.show()
 
-        table = Gtk.Table(n_rows=3, n_columns=17)
+        table = Gtk.Table(n_rows=3, n_columns=17, hexpand=True)
         table.set_border_width(5)
         hbox1.add(table)
 
         # Preamp widget
         global preampscale
         global preampscalevalue
-        preampscale = Gtk.VScale()
+        preampscale = Gtk.Scale(orientation=Gtk.Orientation.VERTICAL)
         preampscale.set_draw_value(0)
         preampscale.set_inverted(1)
         preampscale.set_value_pos(Gtk.PositionType.BOTTOM)
@@ -439,7 +440,7 @@ class Equalizer:
         # preampscalevalue.show()
 
         # Separator between preamp and bands
-        separator = Gtk.VSeparator()
+        separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
         table.attach(separator, 2, 3, 1, 2)
         # separator.show()
 
@@ -449,7 +450,7 @@ class Equalizer:
         self.labels = {}
         self.scalevalues = {}
         for x in range(1, num_ladspa_controls + 1):
-            scale = Gtk.VScale()
+            scale = Gtk.Scale(orientation=Gtk.Orientation.VERTICAL)
             self.scales[x] = scale
             scale.set_draw_value(0)
             scale.set_inverted(1)
@@ -476,7 +477,8 @@ class Equalizer:
 
         table.show()
 
-        vbox2 = Gtk.VBox(homogeneous=True, spacing=1)
+        vbox2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, homogeneous=True,
+                        spacing=1, hexpand=True)
         vbox2.set_border_width(10)
         hbox1.add(vbox2)
         vbox2.show()
@@ -529,7 +531,7 @@ class Equalizer:
         quitbutton.connect('clicked', lambda w: Gtk.main_quit())
         quitbutton.show()
 
-        separator = Gtk.HSeparator()
+        separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
         vbox2.pack_start(separator, False, False, 0)
         separator.set_size_request(100, 10)
         # separator.show()
