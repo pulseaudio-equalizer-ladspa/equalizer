@@ -317,9 +317,10 @@ class Equalizer:
     def on_removepreset(self, widget):
         global preset
         global presets
-        dialog = gtk.FileChooserDialog('Choose preset to remove...',
-                None, gtk.FILE_CHOOSER_ACTION_OPEN, (gtk.STOCK_CANCEL,
-                gtk.RESPONSE_CANCEL, gtk.STOCK_OK, gtk.RESPONSE_OK))
+        dialog = gtk.FileChooserDialog(title='Choose preset to remove...',
+                action=gtk.FILE_CHOOSER_ACTION_OPEN)
+        dialog.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OK,
+                           gtk.RESPONSE_OK)
         dialog.set_default_response(gtk.RESPONSE_OK)
 
         filter = gtk.FileFilter()
