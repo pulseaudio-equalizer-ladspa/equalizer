@@ -11,9 +11,9 @@
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Gio
 
-import os
+import os, sys
 
 configdir = os.getenv('HOME') + '/.config/pulse'
 eqconfig = configdir + '/equalizerrc'
@@ -148,7 +148,7 @@ def FormatLabels(x):
         whitespace1 = '  '
 
 
-class Equalizer:
+class Equalizer(Gtk.ApplicationWindow):
 
     def on_scale(self, widget, y):
         global ladspa_controls
@@ -208,7 +208,7 @@ class Equalizer:
             preampscalevalue.set_markup(str(preampscale.get_value())
                     + 'x')
             windowtitle = 'PulseAudio ' + ladspa_label
-            self.window.set_title(windowtitle + ' [' + realstatus + ']')
+            self.set_title(windowtitle + ' [' + realstatus + ']')
             clearpreset = ''
             for i in range(1, num_ladspa_controls + 1):
                 self.scales[i].set_value(float(ladspa_controls[i - 1]))
@@ -288,10 +288,10 @@ class Equalizer:
     def on_eqenabled(self, widget):
         global status
         if widget.get_active():
-            self.window.set_title(windowtitle + ' [Enabled]')
+            self.set_title(windowtitle + ' [Enabled]')
             status = 1
         else:
-            self.window.set_title(windowtitle + ' [Disabled]')
+            self.set_title(windowtitle + ' [Disabled]')
             status = 0
         ApplySettings()
 
@@ -356,30 +356,26 @@ class Equalizer:
 
         dialog.destroy()
 
-    def destroy_equalizer(self, widget, data=None):
-        Gtk.main_quit()
-
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(Equalizer, self).__init__(*args, **kwargs)
         GetSettings()
 
-        self.window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
-        self.window.set_resizable(True)
+        self.set_resizable(True)
 
-        self.window.connect('destroy', self.destroy_equalizer)
-        self.window.set_title(windowtitle + ' [' + realstatus + ']')
-        self.window.set_border_width(0)
+        self.set_title(windowtitle + ' [' + realstatus + ']')
+        self.set_border_width(0)
 
         icon_theme = Gtk.IconTheme.get_default()
         if icon_theme.has_icon('multimedia-volume-control'):
             icon = icon_theme.load_icon('multimedia-volume-control',
                     16, 0)
-            self.window.set_icon(icon)
+            self.set_icon(icon)
         elif icon_theme.has_icon('gnome-volume-control'):
             icon = icon_theme.load_icon('gnome-volume-control', 16, 0)
-            self.window.set_icon(icon)
+            self.set_icon(icon)
         elif icon_theme.has_icon('stock_volume'):
             icon = icon_theme.load_icon('stock_volume', 16, 0)
-            self.window.set_icon(icon)
+            self.set_icon(icon)
         else:
             print('No icon found, window will be iconless')
 
@@ -398,7 +394,7 @@ class Equalizer:
         root_menu.set_submenu(menu)
 
         vbox1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.window.add(vbox1)
+        self.add(vbox1)
         vbox1.show()
         menu_bar = Gtk.MenuBar()
         vbox1.pack_start(menu_bar, False, False, 0)
@@ -528,7 +524,7 @@ class Equalizer:
 
         quitbutton = Gtk.Button(label='Quit')
         vbox2.pack_start(quitbutton, False, False, 0)
-        quitbutton.connect('clicked', lambda w: Gtk.main_quit())
+        quitbutton.connect('clicked', lambda w: Gio.Application.get_default().quit())
         quitbutton.show()
 
         separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
@@ -536,14 +532,19 @@ class Equalizer:
         separator.set_size_request(100, 10)
         # separator.show()
 
-        self.window.show()
+        self.show()
 
 
-def main():
-    Gtk.main()
-    return 0
+class Application(Gtk.Application):
 
+    def __init__(self, *args, **kwargs):
+        super(Application, self).__init__(*args,
+            application_id='com.github.pulseaudio-equalizer-ladspa.Equalizer',
+            **kwargs)
+        self.window = None
 
-if __name__ == '__main__':
-    Equalizer()
-    main()
+    def do_activate(self):
+        if not self.window:
+            self.window = Equalizer(application=self)
+
+        self.window.present()

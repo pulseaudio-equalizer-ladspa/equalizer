@@ -1,7 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env python
 
-# PulseAudio LADSPA Equalizer - wrapper script
-# Author: Conn O'Griofa <connogriofa AT gmail DOT com>
-# Version: (see '/usr/pulseaudio-equalizer' script)
+from pulseeq import equalizer
 
-/usr/bin/env python @appdir@/equalizer.py
+import sys
+
+app = equalizer.Application()
+app.run(sys.argv)
+

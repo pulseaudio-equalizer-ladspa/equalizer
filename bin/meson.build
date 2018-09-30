@@ -1,5 +1,4 @@
 bin_conf = configuration_data()
-bin_conf.set('appdir', join_paths(prefix, appdir))
 bin_conf.set('pkgdatadir', join_paths(prefix, pkgdatadir))
 
 configure_file(
