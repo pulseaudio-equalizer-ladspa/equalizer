@@ -36,4 +36,7 @@ package() {
 
   python -m compileall -d /usr/lib "$pkgdir/usr/lib"
   python -O -m compileall -d /usr/lib "$pkgdir/usr/lib"
+  
+  # It's GLP3 but has a specific copyright string
+  install -Dm ../LICENSE "$pkgdir"/usr/share/licenses/$pkgname/LICENSE
 }
