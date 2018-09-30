@@ -1,10 +1,10 @@
 # Maintainer: FFY00 <filipe.lains@gmail.com>
 pkgname=pulseaudio-equalizer-ladspa-ffy00-git
 pkgver=1.0.r0.4856f57
-pkgrel=3
-pkgdesc="A 15-band equalizer for PulseAudio (FFY00's fork)"
+pkgrel=1
+pkgdesc='A 15-band equalizer for PulseAudio'
 arch=(any)
-url="https://github.com/pulseaudio-equalizer-ladspa"
+url='https://github.com/pulseaudio-equalizer-ladspa'
 license=('GPL3')
 depends=('python-gobject' 'gtk3' 'swh-plugins' 'pulseaudio' 'bc')
 makedepends=('git')
@@ -21,13 +21,18 @@ pkgver() {
 }
 
 build() {
-  rm -rf build
-  arch-meson equalizer build
-  ninja -C build
+  mkdir -p equalizer/build
+  cd equalizer/build
+
+  arch-meson ..
+
+  ninja
 }
 
 package() {
-  DESTDIR="$pkgdir" meson install -C build
+  cd equalizer/build
+
+  DESTDIR="$pkgdir" meson install
 
   python -m compileall -d /usr/lib "$pkgdir/usr/lib"
   python -O -m compileall -d /usr/lib "$pkgdir/usr/lib"
