@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <template class="Equalizer" parent="GtkApplicationWindow">
+    <property name="title">PulseAudio Equalizer</property>
+    <property name="icon-name">multimedia-volume-control</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkMenuBar">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="visible">True</property>
+                <property name="label">Advanced</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="visible">True</property>
+                        <property name="label">Reset to defaults</property>
+                        <signal name="activate" handler="on_resetsettings"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="visible">True</property>
+                        <property name="label">Remove user preset...</property>
+                        <signal name="activate" handler="on_removepreset"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="orientation">horizontal</property>
+            <property name="spacing">1</property>
+            <property name="vexpand">True</property>
+            <child>
+              <object class="GtkTable" id="table">
+                <property name="visible">True</property>
+                <property name="n_rows">3</property>
+                <property name="n_columns">17</property>
+                <property name="hexpand">True</property>
+                <property name="border_width">5</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="homogeneous">True</property>
+                <property name="spacing">1</property>
+                <property name="hexpand">True</property>
+                <property name="border_width">10</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="use-markup">True</property>
+                    <property name="valign">center</property>
+                    <property name="label">&lt;small&gt;Preset:&lt;/small&gt;</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkComboBoxText" id="presetsbox">
+                    <property name="visible">True</property>
+                    <property name="has_entry">True</property>
+                    <property name="valign">center</property>
+                    <child internal-child="entry">
+                      <object class="GtkEntry">
+                      </object>
+                    </child>
+                    <signal name="changed" handler="on_presetsbox" swapped="no"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton">
+                    <property name="visible">True</property>
+                    <property name="label">Save Preset</property>
+                    <property name="valign">center</property>
+                    <signal name="clicked" handler="on_savepreset" swapped="no"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="eqenabled">
+                    <property name="visible">True</property>
+                    <property name="label">EQ Enabled</property>
+                    <property name="valign">center</property>
+                    <signal name="clicked" handler="on_eqenabled" swapped="no"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="keepsettings">
+                    <property name="visible">True</property>
+                    <property name="label">Keep Settings</property>
+                    <property name="valign">center</property>
+                    <signal name="clicked" handler="on_keepsettings" swapped="no"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="applysettings">
+                    <property name="visible">True</property>
+                    <property name="label">Apply Settings</property>
+                    <property name="valign">center</property>
+                    <signal name="clicked" handler="on_applysettings" swapped="no"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton">
+                    <property name="visible">True</property>
+                    <property name="label">Quit</property>
+                    <property name="valign">center</property>
+                    <signal name="clicked" handler="on_quit" swapped="no"/>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
+

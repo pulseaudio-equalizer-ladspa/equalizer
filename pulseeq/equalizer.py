@@ -148,7 +148,14 @@ def FormatLabels(x):
         whitespace1 = '  '
 
 
+@Gtk.Template(resource_path='/com/github/pulseaudio-equalizer-ladspa/Equalizer/ui/Equalizer.ui')
 class Equalizer(Gtk.ApplicationWindow):
+    __gtype_name__= "Equalizer"
+
+    table = Gtk.Template.Child()
+    presetsbox = Gtk.Template.Child()
+    eqenabled = Gtk.Template.Child()
+    keepsettings = Gtk.Template.Child()
 
     def on_scale(self, widget, y):
         global ladspa_controls
@@ -159,11 +166,12 @@ class Equalizer(Gtk.ApplicationWindow):
         ladspa_controls.insert(y - 1, newvalue)
         if clearpreset == 1:
             preset = ''
-            presetsbox.get_child().set_text(preset)
+            self.presetsbox.get_child().set_text(preset)
         for i in range(1, num_ladspa_controls + 1):
             self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i - 1])) + '\ndB</small>')
 
-    def on_presetsbox(self, widget, x):
+    @Gtk.Template.Callback()
+    def on_presetsbox(self, widget):
         global preset
         global presetmatch
         global clearpreset
@@ -175,7 +183,7 @@ class Equalizer(Gtk.ApplicationWindow):
         global ladspa_controls
         global ladspa_inputs
         global windowtitle
-        preset = presetsbox.get_child().get_text()
+        preset = self.presetsbox.get_child().get_text()
 
         presetmatch = ''
         for i in range(len(rawpresets)):
@@ -219,20 +227,22 @@ class Equalizer(Gtk.ApplicationWindow):
             # Set preset again due to interference from scale modifications
             preset = str(rawdata[4])
             clearpreset = 1
-            presetsbox.get_child().set_text(preset)
+            self.presetsbox.get_child().set_text(preset)
             ApplySettings()
 
+    @Gtk.Template.Callback()
     def on_applysettings(self, widget):
         ApplySettings()
 
+    @Gtk.Template.Callback()
     def on_resetsettings(self, widget):
         print('Resetting to defaults...')
         os.system('pulseaudio-equalizer interface.resetsettings')
         GetSettings()
 
-        eqenabled.set_active(status)
-        keepsettings.set_active(persistence)
-        presetsbox.get_child().set_text(preset)
+        self.eqenabled.set_active(status)
+        self.keepsettings.set_active(persistence)
+        self.presetsbox.get_child().set_text(preset)
         preampscale.set_value(float(preamp))
         for i in range(1, num_ladspa_controls + 1):
             self.scales[i].set_value(float(ladspa_controls[i - 1]))
@@ -240,10 +250,11 @@ class Equalizer(Gtk.ApplicationWindow):
             self.labels[i].set_markup('<small>' + whitespace1 + c + '\n' + whitespace2 + suffix + '</small>')
             self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i - 1])) + '\ndB</small>')
 
+    @Gtk.Template.Callback()
     def on_savepreset(self, widget):
         global preset
         global presetmatch
-        preset = presetsbox.get_child().get_text()
+        preset = self.presetsbox.get_child().get_text()
         if preset == '' or presetmatch == 1:
             print('Invalid preset name')
         else:
@@ -266,7 +277,7 @@ class Equalizer(Gtk.ApplicationWindow):
             f.close()
 
             # Clear preset list from ComboBox
-            presetsbox.remove_all()
+            self.presetsbox.remove_all()
 
             # Apply settings (which will save new preset as default)
             ApplySettings()
@@ -276,15 +287,16 @@ class Equalizer(Gtk.ApplicationWindow):
 
             # Repopulate preset list into ComboBox
             for i in range(len(rawpresets)):
-                presetsbox.append_text(rawpresets[i])
+                self.presetsbox.append_text(rawpresets[i])
 
     def on_preampscale(self, widget):
         global preamp
         preamp = float(round(widget.get_value(), 1))
         preampscalevalue.set_markup(str(preamp) + 'x')
         # preset = ''
-        # presetsbox.get_child().set_text(preset)
+        # self.presetsbox.get_child().set_text(preset)
 
+    @Gtk.Template.Callback()
     def on_eqenabled(self, widget):
         global status
         if widget.get_active():
@@ -295,6 +307,7 @@ class Equalizer(Gtk.ApplicationWindow):
             status = 0
         ApplySettings()
 
+    @Gtk.Template.Callback()
     def on_keepsettings(self, widget):
         global persistence
         if widget.get_active():
@@ -303,6 +316,7 @@ class Equalizer(Gtk.ApplicationWindow):
             persistence = 0
         ApplySettings()
 
+    @Gtk.Template.Callback()
     def on_removepreset(self, widget):
         global preset
         global presets
@@ -327,13 +341,13 @@ class Equalizer(Gtk.ApplicationWindow):
             os.remove(filename)
 
             # Make a note of the current preset, then clear it temporarily
-            preset = presetsbox.get_child().get_text()
+            preset = self.presetsbox.get_child().get_text()
             realpreset = preset
             preset = ''
-            presetsbox.get_child().set_text('')
+            self.presetsbox.get_child().set_text('')
 
             # Clear preset list from ComboBox
-            presetsbox.remove_all()
+            self.presetsbox.remove_all()
 
             # Refresh (and therefore, sort) preset list
             GetSettings()
@@ -345,71 +359,26 @@ class Equalizer(Gtk.ApplicationWindow):
                 preset = realpreset
 
             # Restore preset
-            presetsbox.get_child().set_text(preset)
+            self.presetsbox.get_child().set_text(preset)
 
             # Repopulate preset list into ComboBox
             for i in range(len(rawpresets)):
-                presetsbox.append_text(rawpresets[i])
+                self.presetsbox.append_text(rawpresets[i])
 
             # Apply settings
             ApplySettings()
 
         dialog.destroy()
 
+    @Gtk.Template.Callback()
+    def on_quit(self, widget):
+        Gio.Application.get_default().quit()
+
     def __init__(self, *args, **kwargs):
         super(Equalizer, self).__init__(*args, **kwargs)
         GetSettings()
 
-        self.set_resizable(True)
-
         self.set_title(windowtitle + ' [' + realstatus + ']')
-        self.set_border_width(0)
-
-        icon_theme = Gtk.IconTheme.get_default()
-        if icon_theme.has_icon('multimedia-volume-control'):
-            icon = icon_theme.load_icon('multimedia-volume-control',
-                    16, 0)
-            self.set_icon(icon)
-        elif icon_theme.has_icon('gnome-volume-control'):
-            icon = icon_theme.load_icon('gnome-volume-control', 16, 0)
-            self.set_icon(icon)
-        elif icon_theme.has_icon('stock_volume'):
-            icon = icon_theme.load_icon('stock_volume', 16, 0)
-            self.set_icon(icon)
-        else:
-            print('No icon found, window will be iconless')
-
-        menu = Gtk.Menu()
-
-        menu_item = Gtk.MenuItem(label='Reset to defaults')
-        menu_item.connect('activate', self.on_resetsettings)
-        menu.append(menu_item)
-        menu_item.show()
-        menu_item = Gtk.MenuItem(label='Remove user preset...')
-        menu_item.connect('activate', self.on_removepreset)
-        menu.append(menu_item)
-        menu_item.show()
-        root_menu = Gtk.MenuItem(label='Advanced')
-        root_menu.show()
-        root_menu.set_submenu(menu)
-
-        vbox1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.add(vbox1)
-        vbox1.show()
-        menu_bar = Gtk.MenuBar()
-        vbox1.pack_start(menu_bar, False, False, 0)
-        menu_bar.show()
-        menu_bar.append(root_menu)
-
-        hbox1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,
-                        homogeneous=False, spacing=1, vexpand=True)
-        #hbox1.set_border_width(10)
-        vbox1.add(hbox1)
-        hbox1.show()
-
-        table = Gtk.Table(n_rows=3, n_columns=17, hexpand=True)
-        table.set_border_width(5)
-        hbox1.add(table)
 
         # Preamp widget
         global preampscale
@@ -428,16 +397,16 @@ class Equalizer(Gtk.ApplicationWindow):
         label.set_markup('<small>Preamp</small>')
         preampscalevalue = Gtk.Label()
         preampscalevalue.set_markup(str(preampscale.get_value()) + 'x')
-        table.attach(label, 1, 2, 0, 1)
-        table.attach(preampscale, 1, 2, 1, 2)
-        table.attach(preampscalevalue, 1, 2, 2, 3)
+        self.table.attach(label, 1, 2, 0, 1)
+        self.table.attach(preampscale, 1, 2, 1, 2)
+        self.table.attach(preampscalevalue, 1, 2, 2, 3)
         # label.show()
         # preampscale.show()
         # preampscalevalue.show()
 
         # Separator between preamp and bands
         separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-        table.attach(separator, 2, 3, 1, 2)
+        self.table.attach(separator, 2, 3, 1, 2)
         # separator.show()
 
         # Equalizer bands
@@ -464,73 +433,20 @@ class Equalizer(Gtk.ApplicationWindow):
             scalevalue = Gtk.Label()
             self.scalevalues[x] = scalevalue
             scalevalue.set_markup('<small>' + str(scale.get_value())  + '\ndB</small>')
-            table.attach(label, x + 2, x + 3, 0, 1)
-            table.attach(scale, x + 2, x + 3, 1, 2)
-            table.attach(scalevalue, x + 2, x + 3, 2, 3)
+            self.table.attach(label, x + 2, x + 3, 0, 1)
+            self.table.attach(scale, x + 2, x + 3, 1, 2)
+            self.table.attach(scalevalue, x + 2, x + 3, 2, 3)
             label.show()
             scale.show()
             scalevalue.show()
 
-        table.show()
-
-        vbox2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, homogeneous=True,
-                        spacing=1, hexpand=True)
-        vbox2.set_border_width(10)
-        hbox1.add(vbox2)
-        vbox2.show()
-
-        presetslabel = Gtk.Label()
-        presetslabel.set_markup('<small>Preset:</small>')
-        vbox2.pack_start(presetslabel, False, False, 0)
-        presetslabel.show()
-
-        global presetsbox
-        presetmodel = Gtk.ListStore(str)
-        presetsbox = Gtk.ComboBoxText.new_with_entry();
-        presetsbox.set_model(model=presetmodel)
-        presetsbox.set_entry_text_column(0)
-        vbox2.pack_start(presetsbox, False, False, 0)
-        presetsbox.get_child().set_text(preset)
+        self.presetsbox.get_child().set_text(preset)
         for i in range(len(rawpresets)):
-            presetsbox.append_text(rawpresets[i])
-        presetsbox.connect('changed', self.on_presetsbox, x)
-        presetsbox.show()
+            self.presetsbox.append_text(rawpresets[i])
 
-        savepreset = Gtk.Button(label='Save Preset')
-        vbox2.pack_start(savepreset, False, False, 0)
-        savepreset.connect('clicked', self.on_savepreset)
-        savepreset.show()
+        self.eqenabled.set_active(status)
 
-        global eqenabled
-        eqenabled = Gtk.CheckButton(label='EQ Enabled')
-        eqenabled.set_active(status)
-        #eqenabled.unset_flags(Gtk.CAN_FOCUS)
-        eqenabled.connect('clicked', self.on_eqenabled)
-        vbox2.pack_start(eqenabled, False, False, 0)
-        eqenabled.show()
-
-        global keepsettings
-        keepsettings = Gtk.CheckButton(label='Keep Settings')
-        keepsettings.set_active(persistence)
-        #keepsettings.unset_flags(Gtk.CAN_FOCUS)
-        keepsettings.connect('clicked', self.on_keepsettings)
-        vbox2.pack_start(keepsettings, False, False, 0)
-        keepsettings.show()
-
-        applysettings = Gtk.Button(label='Apply Settings')
-        vbox2.pack_start(applysettings, False, False, 0)
-        applysettings.connect('clicked', self.on_applysettings)
-        applysettings.show()
-
-        quitbutton = Gtk.Button(label='Quit')
-        vbox2.pack_start(quitbutton, False, False, 0)
-        quitbutton.connect('clicked', lambda w: Gio.Application.get_default().quit())
-        quitbutton.show()
-
-        separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        vbox2.pack_start(separator, False, False, 0)
-        separator.set_size_request(100, 10)
-        # separator.show()
+        self.keepsettings.set_active(persistence)
 
         self.show()
 
