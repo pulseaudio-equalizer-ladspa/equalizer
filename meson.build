@@ -6,14 +6,16 @@ project('pulseaudio-equalizer',
 pymod = import('python')
 python = pymod.find_installation()
 
+modname = 'pulseeq'
+
 prefix = get_option('prefix')
 bindir = get_option('bindir')
 datadir = get_option('datadir')
 pythondir = python.get_path('purelib')
 
 pkgdatadir = join_paths(datadir, meson.project_name())
-appdir = join_paths(pythondir, meson.project_name())
+appdir = join_paths(pythondir, modname)
 
 subdir('bin')
 subdir('data')
-subdir('equalizer')
+subdir(modname)
