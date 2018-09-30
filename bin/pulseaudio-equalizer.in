@@ -18,11 +18,16 @@ PA_CONTROL_MAX="30"
 PA_PREAMP="1.0"
 PA_CURRENT_PRESET=""
 
-PRESET_DIR1=$HOME/.config/pulse/presets
+if [ -z "$XDG_CONFIG_HOME" ]; then
+  CONFIG_DIR=$HOME/.config/pulse
+else
+  CONFIG_DIR=$XDG_CONFIG_HOME/pulse
+fi
+PRESET_DIR1=$CONFIG_DIR/presets
 PRESET_DIR2=@pkgdatadir@/presets
 SCRIPT_NAME=pulseaudio-equalizer
 SCRIPT_VERSION="4.0 (29.01.2017)"
-CONFIG_NAME=$HOME/.config/pulse/equalizerrc
+CONFIG_NAME=$CONFIG_DIR/equalizerrc
 LOG_NAME=$HOME/pulseaudio-equalizer.log
 
 # Don't execute the script with elevated privileges
@@ -125,8 +130,8 @@ else
 fi
 
 # Check if equalizer is set as persistent
-if [ -f $HOME/.config/pulse/default.pa ]; then
-  if [ "$(cat $HOME/.config/pulse/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
+if [ -f $CONFIG_DIR/default.pa ]; then
+  if [ "$(cat $CONFIG_DIR/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
     PA_EQUALIZER_PERSISTENCE=1
   else
     PA_EQUALIZER_PERSISTENCE=0
@@ -206,8 +211,8 @@ if [ "$1" = "log" ]; then
   echo PA_PREAMP=$PA_PREAMP
   echo PA_REAL_PREAMP=$PA_REAL_PREAMP
 
-  if [ -f $HOME/.config/pulse/default.pa ]; then
-    tail -n7 $HOME/.config/pulse/default.pa
+  if [ -f $CONFIG_DIR/default.pa ]; then
+    tail -n7 $CONFIG_DIR/default.pa
   fi
 
   echo "---"
@@ -217,12 +222,17 @@ fi
 
 # PyGTK Interface - Get Settings
 if [ "$1" = "interface.getsettings" ]; then
+  # Ensure that user config directory exists
+  if [ ! -d $CONFIG_DIR ]; then
+    mkdir -p $CONFIG_DIR
+  fi
+
   # Convert commas into newlines and dump all settings to configuration file
   echo $PA_LADSPA_PLUGIN,$PA_LADSPA_LABEL,$PA_LADSPA_PLUGIN_NAME,$PA_PREAMP,$PA_CURRENT_PRESET,$PA_EQUALIZER_STATUS,$PA_EQUALIZER_PERSISTENCE,$PA_CONTROL_MIN,$PA_CONTROL_MAX,$PA_NUM_LADSPA_INPUTS,$PA_LADSPA_CONTROLS,$PA_LADSPA_INPUTS | sed 's/,/\n/g' >$CONFIG_NAME
 
   # Ensure that user preset directory exists
   if [ ! -d $PRESET_DIR1 ]; then
-    mkdir $PRESET_DIR1
+    mkdir -p $PRESET_DIR1
   fi
 
   # Generate list of available presets (system)
@@ -255,24 +265,24 @@ if [ "$1" = "enable-config" ]; then
   echo "-------------------------------------"
 
   # If equalizer configuration is already set, delete file
-  if [ -f $HOME/.config/pulse/default.pa ]; then
-    if [ "$(cat $HOME/.config/pulse/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
-      echo "Equalizer definition detected in file '$HOME/.config/pulse/default.pa', deleting..."
-      rm $HOME/.config/pulse/default.pa
+  if [ -f $CONFIG_DIR/default.pa ]; then
+    if [ "$(cat $CONFIG_DIR/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
+      echo "Equalizer definition detected in file '$CONFIG_DIR/default.pa', deleting..."
+      rm $CONFIG_DIR/default.pa
     fi
   fi
 
   # Make a backup of configuration if necessary
-  if [ -f $HOME/.config/pulse/default.pa ]; then
-    echo "Found '$HOME/.config/pulse/default.pa', making a copy..."
-    cp $HOME/.config/pulse/default.pa $HOME/.config/pulse/default.pa.noeq
-    CFG_SOURCE_FILE="$HOME/.config/pulse/default.pa.noeq"
+  if [ -f $CONFIG_DIR/default.pa ]; then
+    echo "Found '$CONFIG_DIR/default.pa', making a copy..."
+    cp $CONFIG_DIR/default.pa $CONFIG_DIR/default.pa.noeq
+    CFG_SOURCE_FILE="$CONFIG_DIR/default.pa.noeq"
   fi
 
   # Decide which file to use as the configuration source
-  if [ -f $HOME/.config/pulse/default.pa.noeq ]; then
-    echo "Found '$HOME/.config/pulse/default.pa.noeq'..."
-    CFG_SOURCE_FILE="$HOME/.config/pulse/default.pa.noeq"
+  if [ -f $CONFIG_DIR/default.pa.noeq ]; then
+    echo "Found '$CONFIG_DIR/default.pa.noeq'..."
+    CFG_SOURCE_FILE="$CONFIG_DIR/default.pa.noeq"
   else
     CFG_SOURCE_FILE="/etc/pulse/default.pa"
   fi
@@ -280,21 +290,21 @@ if [ "$1" = "enable-config" ]; then
   echo "Using configuration file '$CFG_SOURCE_FILE' as source..."
 
   # Modify module-stream-restore line to disable cached sinks
-  cat $CFG_SOURCE_FILE | sed 's/load-module module-stream-restore/load-module module-stream-restore restore_device=false/g' >$HOME/.config/pulse/default.pa 
+  cat $CFG_SOURCE_FILE | sed 's/load-module module-stream-restore/load-module module-stream-restore restore_device=false/g' >$CONFIG_DIR/default.pa
 
   # Add module-ladspa-sink definition
-  echo "" >>$HOME/.config/pulse/default.pa
-  echo "### BEGIN: Equalized audio configuration" >>$HOME/.config/pulse/default.pa
-  echo "### Generated from: $SCRIPT_NAME" >>$HOME/.config/pulse/default.pa
-  echo ".nofail" >>$HOME/.config/pulse/default.pa
-  echo "load-module module-ladspa-sink sink_name=$PA_LADSPA_SINK sink_master=$PA_MASTER_SINK plugin=$PA_LADSPA_PLUGIN label=$PA_LADSPA_LABEL control=$PA_LADSPA_CONTROLS" >>$HOME/.config/pulse/default.pa
+  echo "" >>$CONFIG_DIR/default.pa
+  echo "### BEGIN: Equalized audio configuration" >>$CONFIG_DIR/default.pa
+  echo "### Generated from: $SCRIPT_NAME" >>$CONFIG_DIR/default.pa
+  echo ".nofail" >>$CONFIG_DIR/default.pa
+  echo "load-module module-ladspa-sink sink_name=$PA_LADSPA_SINK sink_master=$PA_MASTER_SINK plugin=$PA_LADSPA_PLUGIN label=$PA_LADSPA_LABEL control=$PA_LADSPA_CONTROLS" >>$CONFIG_DIR/default.pa
 
   # Set LADSPA sink as default sink & set appropriate master sink (preamp) volume
-  echo "set-default-sink $PA_LADSPA_SINK" >>$HOME/.config/pulse/default.pa
-  #echo "set-sink-volume $PA_MASTER_SINK $PA_REAL_PREAMP" >>$HOME/.config/pulse/default.pa
-  echo "set-sink-mute $PA_MASTER_SINK 0" >>$HOME/.config/pulse/default.pa
-  echo ".endif" >>$HOME/.config/pulse/default.pa
-  echo "### END: Equalized audio configuration" >>$HOME/.config/pulse/default.pa
+  echo "set-default-sink $PA_LADSPA_SINK" >>$CONFIG_DIR/default.pa
+  #echo "set-sink-volume $PA_MASTER_SINK $PA_REAL_PREAMP" >>$CONFIG_DIR/default.pa
+  echo "set-sink-mute $PA_MASTER_SINK 0" >>$CONFIG_DIR/default.pa
+  echo ".endif" >>$CONFIG_DIR/default.pa
+  echo "### END: Equalized audio configuration" >>$CONFIG_DIR/default.pa
 
   echo "Equalizer setting saved (enable-config)."
   echo "-------------------------------------"
@@ -310,16 +320,16 @@ if [ "$1" = "disable-config" ]; then
   echo "-------------------------------------"
 
   # Move .noeq configuration file if it exists
-  if [ -f $HOME/.config/pulse/default.pa.noeq ]; then
-    echo "Found '$HOME/.config/pulse/default.pa.noeq', moving..."
-    mv $HOME/.config/pulse/default.pa.noeq $HOME/.config/pulse/default.pa
+  if [ -f $CONFIG_DIR/default.pa.noeq ]; then
+    echo "Found '$CONFIG_DIR/default.pa.noeq', moving..."
+    mv $CONFIG_DIR/default.pa.noeq $CONFIG_DIR/default.pa
   fi
 
   # If equalizer configuration is present, delete file
-  if [ -f $HOME/.config/pulse/default.pa ]; then
-    if [ "$(cat $HOME/.config/pulse/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
-     echo "Equalizer definition detected, deleting '$HOME/.config/pulse/default.pa'..."
-     rm $HOME/.config/pulse/default.pa
+  if [ -f $CONFIG_DIR/default.pa ]; then
+    if [ "$(cat $CONFIG_DIR/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
+     echo "Equalizer definition detected, deleting '$CONFIG_DIR/default.pa'..."
+     rm $CONFIG_DIR/default.pa
    fi
   fi
 
@@ -430,8 +440,8 @@ if [ "$PA_CURRENT_SINK" = "$PA_LADSPA_SINK" ]; then
   echo "-------------------------------------"
   echo "Equalizer status: [enabled]"
 
-  if [ -f $HOME/.config/pulse/default.pa ]; then
-    if [ "$(cat $HOME/.config/pulse/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
+  if [ -f $CONFIG_DIR/default.pa ]; then
+    if [ "$(cat $CONFIG_DIR/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
       echo "Equalizer configuration status: [enabled]"
     else
       echo "Equalizer configuration status: [disabled]"
@@ -452,8 +462,8 @@ else
   echo "-------------------------------------"
   echo "Equalizer status: [disabled]"
 
-  if [ -f $HOME/.config/pulse/default.pa ]; then
-    if [ "$(cat $HOME/.config/pulse/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
+  if [ -f $CONFIG_DIR/default.pa ]; then
+    if [ "$(cat $CONFIG_DIR/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
       echo "Equalizer configuration status: [enabled]"
       echo "Equalizer plugin: [$PA_LADSPA_PLUGIN/$PA_LADSPA_LABEL]"
       echo "Equalizer control: [$PA_LADSPA_CONTROLS]"
