@@ -7,6 +7,7 @@ pymod = import('python')
 python = pymod.find_installation()
 
 modname = 'pulseeq'
+appid = 'com.github.pulseaudio-equalizer-ladspa.Equalizer'
 
 prefix = get_option('prefix')
 bindir = get_option('bindir')
