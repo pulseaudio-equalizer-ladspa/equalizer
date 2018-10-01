@@ -2,12 +2,22 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <template class="Equalizer" parent="GtkApplicationWindow">
-    <property name="title">PulseAudio Equalizer</property>
     <property name="icon-name">multimedia-volume-control</property>
     <child type="titlebar">
       <object class="GtkHeaderBar" id="headerbar">
         <property name="visible">True</property>
         <property name="show_close_button">True</property>
+        <property name="title">PulseAudio Equalizer</property>
+        <child>
+          <object class="GtkSwitch">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="action_name">win.eqenabled</property>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+          </packing>
+        </child>
       </object>
     </child>
     <child>
@@ -63,22 +73,6 @@
                     <property name="label">Save Preset</property>
                     <property name="valign">center</property>
                     <signal name="clicked" handler="on_savepreset" swapped="no"/>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="eqenabled">
-                    <property name="visible">True</property>
-                    <property name="label">EQ Enabled</property>
-                    <property name="valign">center</property>
-                    <signal name="clicked" handler="on_eqenabled" swapped="no"/>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="keepsettings">
-                    <property name="visible">True</property>
-                    <property name="label">Keep Settings</property>
-                    <property name="valign">center</property>
-                    <signal name="clicked" handler="on_keepsettings" swapped="no"/>
                   </object>
                 </child>
                 <child>
