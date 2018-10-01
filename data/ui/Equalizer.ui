@@ -9,36 +9,6 @@
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkMenuBar">
-            <property name="visible">True</property>
-            <child>
-              <object class="GtkMenuItem">
-                <property name="visible">True</property>
-                <property name="label">Advanced</property>
-                <child type="submenu">
-                  <object class="GtkMenu">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="label">Reset to defaults</property>
-                        <signal name="activate" handler="on_resetsettings"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">True</property>
-                        <property name="label">Remove user preset...</property>
-                        <signal name="activate" handler="on_removepreset"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="orientation">horizontal</property>

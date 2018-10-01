@@ -234,8 +234,7 @@ class Equalizer(Gtk.ApplicationWindow):
     def on_applysettings(self, widget):
         ApplySettings()
 
-    @Gtk.Template.Callback()
-    def on_resetsettings(self, widget):
+    def on_resetsettings(self, action=None, param=None):
         print('Resetting to defaults...')
         os.system('pulseaudio-equalizer interface.resetsettings')
         GetSettings()
@@ -316,8 +315,7 @@ class Equalizer(Gtk.ApplicationWindow):
             persistence = 0
         ApplySettings()
 
-    @Gtk.Template.Callback()
-    def on_removepreset(self, widget):
+    def on_removepreset(self, action=None, param=None):
         global preset
         global presets
         dialog = Gtk.FileChooserDialog(title='Choose preset to remove...',
@@ -371,7 +369,7 @@ class Equalizer(Gtk.ApplicationWindow):
         dialog.destroy()
 
     @Gtk.Template.Callback()
-    def on_quit(self, widget):
+    def on_quit(self, object=None, param=None):
         Gio.Application.get_default().quit()
 
     def __init__(self, *args, **kwargs):
@@ -456,8 +454,27 @@ class Application(Gtk.Application):
     def __init__(self, *args, **kwargs):
         super(Application, self).__init__(*args,
             application_id='com.github.pulseaudio-equalizer-ladspa.Equalizer',
+            resource_base_path='/com/github/pulseaudio-equalizer-ladspa/Equalizer',
             **kwargs)
+
         self.window = None
+
+    def do_startup(self):
+        Gtk.Application.do_startup(self)
+
+        self.window = Equalizer(application=self)
+
+        action = Gio.SimpleAction.new('resetsettings', None)
+        action.connect('activate', self.window.on_resetsettings)
+        self.add_action(action)
+
+        action = Gio.SimpleAction.new('removepreset', None)
+        action.connect('activate', self.window.on_removepreset)
+        self.add_action(action)
+
+        action = Gio.SimpleAction.new('quit', None)
+        action.connect('activate', self.window.on_quit)
+        self.add_action(action)
 
     def do_activate(self):
         if not self.window:
