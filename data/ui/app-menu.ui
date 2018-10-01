@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <menu id="app-menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Reset to defaults</attribute>
+        <attribute name="action">app.resetsettings</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Remove user preset…</attribute>
+        <attribute name="action">app.removepreset</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Quit</attribute>
+        <attribute name="action">app.quit</attribute>
+        <attribute name="accel">&lt;Primary&gt;q</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>
+
