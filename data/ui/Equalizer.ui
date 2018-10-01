@@ -8,6 +8,24 @@
         <property name="visible">True</property>
         <property name="show_close_button">True</property>
         <property name="title">PulseAudio Equalizer</property>
+        <child>
+          <object class="GtkButton">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="action_name">win.save</property>
+            <property name="tooltip-text">Save current preset</property>
+            <style>
+              <class name="suggested-action"/>
+            </style>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="icon-name">document-save-symbolic</property>
+              </object>
+            </child>
+          </object>
+        </child>
         <child type="title">
           <object class="GtkComboBoxText" id="presetsbox">
             <property name="visible">True</property>
@@ -59,14 +77,6 @@
                 <property name="spacing">1</property>
                 <property name="hexpand">True</property>
                 <property name="border_width">10</property>
-                <child>
-                  <object class="GtkButton">
-                    <property name="visible">True</property>
-                    <property name="label">Save Preset</property>
-                    <property name="valign">center</property>
-                    <signal name="clicked" handler="on_savepreset" swapped="no"/>
-                  </object>
-                </child>
                 <child>
                   <object class="GtkButton" id="applysettings">
                     <property name="visible">True</property>

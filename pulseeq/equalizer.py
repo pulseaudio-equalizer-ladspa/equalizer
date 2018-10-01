@@ -216,6 +216,10 @@ class Equalizer(Gtk.ApplicationWindow):
             self.presetsbox.get_child().set_text(preset)
             ApplySettings()
 
+            self.lookup_action('save').set_enabled(False)
+        else:
+            self.lookup_action('save').set_enabled(preset != '')
+
     @Gtk.Template.Callback()
     def on_applysettings(self, widget):
         ApplySettings()
@@ -235,8 +239,7 @@ class Equalizer(Gtk.ApplicationWindow):
             self.labels[i].set_markup('<small>' + whitespace1 + c + '\n' + whitespace2 + suffix + '</small>')
             self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i - 1])) + '\ndB</small>')
 
-    @Gtk.Template.Callback()
-    def on_savepreset(self, widget):
+    def on_savepreset(self, action, param):
         global preset
         global presetmatch
         preset = self.presetsbox.get_child().get_text()
@@ -273,6 +276,8 @@ class Equalizer(Gtk.ApplicationWindow):
             # Repopulate preset list into ComboBox
             for i in range(len(rawpresets)):
                 self.presetsbox.append_text(rawpresets[i])
+
+            action.set_enabled(False)
 
     def on_preampscale(self, widget):
         global preamp
@@ -407,6 +412,11 @@ class Equalizer(Gtk.ApplicationWindow):
             label.show()
             scale.show()
             scalevalue.show()
+
+        action = Gio.SimpleAction.new('save', None)
+        action.set_enabled(False)
+        action.connect('activate', self.on_savepreset)
+        self.add_action(action)
 
         self.presetsbox.get_child().set_text(preset)
         for i in range(len(rawpresets)):
