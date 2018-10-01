@@ -145,7 +145,6 @@ class Equalizer(Gtk.ApplicationWindow):
 
     table = Gtk.Template.Child()
     presetsbox = Gtk.Template.Child()
-    keepsettings = Gtk.Template.Child()
 
     def on_scale(self, widget, y):
         global ladspa_controls
@@ -227,7 +226,7 @@ class Equalizer(Gtk.ApplicationWindow):
         GetSettings()
 
         self.lookup_action('eqenabled').set_state(GLib.Variant('b', status))
-        self.keepsettings.set_active(persistence)
+        Gio.Application.get_default().lookup_action('keepsettings').set_state(GLib.Variant('b', persistence))
         self.presetsbox.get_child().set_text(preset)
         preampscale.set_value(float(preamp))
         for i in range(1, num_ladspa_controls + 1):
@@ -287,15 +286,6 @@ class Equalizer(Gtk.ApplicationWindow):
         status = int(state.get_boolean())
         ApplySettings()
         action.set_state(state)
-
-    @Gtk.Template.Callback()
-    def on_keepsettings(self, widget):
-        global persistence
-        if widget.get_active():
-            persistence = 1
-        else:
-            persistence = 0
-        ApplySettings()
 
     def on_removepreset(self, action=None, param=None):
         global preset
@@ -427,8 +417,6 @@ class Equalizer(Gtk.ApplicationWindow):
         action.connect('change-state', self.on_eqenabled)
         self.add_action(action)
 
-        self.keepsettings.set_active(persistence)
-
         self.show()
 
 
@@ -444,6 +432,7 @@ class Application(Gtk.Application):
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
+        GetSettings()
 
         self.window = Equalizer(application=self)
 
@@ -455,6 +444,12 @@ class Application(Gtk.Application):
         action.connect('activate', self.window.on_removepreset)
         self.add_action(action)
 
+        global persistence
+        action = Gio.SimpleAction.new_stateful('keepsettings', None,
+                                               GLib.Variant('b', persistence))
+        action.connect('change-state', self.on_keepsettings)
+        self.add_action(action)
+
         action = Gio.SimpleAction.new('quit', None)
         action.connect('activate', self.window.on_quit)
         self.add_action(action)
@@ -464,3 +459,9 @@ class Application(Gtk.Application):
             self.window = Equalizer(application=self)
 
         self.window.present()
+
+    def on_keepsettings(self, action, state):
+        global persistence
+        persistence = int(state.get_boolean())
+        ApplySettings()
+        action.set_state(state)
