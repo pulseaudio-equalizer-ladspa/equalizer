@@ -11,7 +11,7 @@
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio
+from gi.repository import Gtk, Gio, GLib
 
 import os, sys
 
@@ -34,11 +34,9 @@ def GetSettings():
     global ladspa_controls
     global ladspa_inputs
     global status
-    global realstatus
     global persistence
     global preset
     global ranges
-    global windowtitle
     global presetmatch
     global clearpreset
 
@@ -67,13 +65,6 @@ def GetSettings():
     num_ladspa_controls = int(rawdata[9])
     ladspa_controls = rawdata[10:10 + num_ladspa_controls]
     ladspa_inputs = rawdata[10 + num_ladspa_controls:10 + num_ladspa_controls + num_ladspa_controls]
-
-    if status == 1:
-        realstatus = 'Enabled'
-    else:
-        realstatus = 'Disabled'
-
-    windowtitle = 'PulseAudio ' + ladspa_label
 
     clearpreset = 1
     presetmatch = ''
@@ -154,7 +145,6 @@ class Equalizer(Gtk.ApplicationWindow):
 
     table = Gtk.Template.Child()
     presetsbox = Gtk.Template.Child()
-    eqenabled = Gtk.Template.Child()
     keepsettings = Gtk.Template.Child()
 
     def on_scale(self, widget, y):
@@ -182,7 +172,6 @@ class Equalizer(Gtk.ApplicationWindow):
         global num_ladspa_controls
         global ladspa_controls
         global ladspa_inputs
-        global windowtitle
         preset = self.presetsbox.get_child().get_text()
 
         presetmatch = ''
@@ -215,8 +204,6 @@ class Equalizer(Gtk.ApplicationWindow):
             preampscale.set_value(float(preamp))
             preampscalevalue.set_markup(str(preampscale.get_value())
                     + 'x')
-            windowtitle = 'PulseAudio ' + ladspa_label
-            self.set_title(windowtitle + ' [' + realstatus + ']')
             clearpreset = ''
             for i in range(1, num_ladspa_controls + 1):
                 self.scales[i].set_value(float(ladspa_controls[i - 1]))
@@ -239,7 +226,7 @@ class Equalizer(Gtk.ApplicationWindow):
         os.system('pulseaudio-equalizer interface.resetsettings')
         GetSettings()
 
-        self.eqenabled.set_active(status)
+        self.lookup_action('eqenabled').set_state(GLib.Variant('b', status))
         self.keepsettings.set_active(persistence)
         self.presetsbox.get_child().set_text(preset)
         preampscale.set_value(float(preamp))
@@ -295,16 +282,11 @@ class Equalizer(Gtk.ApplicationWindow):
         # preset = ''
         # self.presetsbox.get_child().set_text(preset)
 
-    @Gtk.Template.Callback()
-    def on_eqenabled(self, widget):
+    def on_eqenabled(self, action, state):
         global status
-        if widget.get_active():
-            self.set_title(windowtitle + ' [Enabled]')
-            status = 1
-        else:
-            self.set_title(windowtitle + ' [Disabled]')
-            status = 0
+        status = int(state.get_boolean())
         ApplySettings()
+        action.set_state(state)
 
     @Gtk.Template.Callback()
     def on_keepsettings(self, widget):
@@ -376,8 +358,6 @@ class Equalizer(Gtk.ApplicationWindow):
         super(Equalizer, self).__init__(*args, **kwargs)
         GetSettings()
 
-        self.set_title(windowtitle + ' [' + realstatus + ']')
-
         # Preamp widget
         global preampscale
         global preampscalevalue
@@ -442,7 +422,10 @@ class Equalizer(Gtk.ApplicationWindow):
         for i in range(len(rawpresets)):
             self.presetsbox.append_text(rawpresets[i])
 
-        self.eqenabled.set_active(status)
+        action = Gio.SimpleAction.new_stateful('eqenabled', None,
+                                               GLib.Variant('b', status))
+        action.connect('change-state', self.on_eqenabled)
+        self.add_action(action)
 
         self.keepsettings.set_active(persistence)
 
