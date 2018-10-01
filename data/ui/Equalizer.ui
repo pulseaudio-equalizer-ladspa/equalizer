@@ -68,44 +68,11 @@
       </object>
     </child>
     <child>
-      <object class="GtkBox">
+      <object class="GtkTable" id="table">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="orientation">horizontal</property>
-            <property name="spacing">1</property>
-            <property name="vexpand">True</property>
-            <child>
-              <object class="GtkTable" id="table">
-                <property name="visible">True</property>
-                <property name="n_rows">3</property>
-                <property name="n_columns">17</property>
-                <property name="hexpand">True</property>
-                <property name="border_width">5</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <property name="homogeneous">True</property>
-                <property name="spacing">1</property>
-                <property name="hexpand">True</property>
-                <property name="border_width">10</property>
-                <child>
-                  <object class="GtkButton">
-                    <property name="visible">True</property>
-                    <property name="label">Quit</property>
-                    <property name="valign">center</property>
-                    <signal name="clicked" handler="on_quit" swapped="no"/>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-        </child>
+        <property name="n_rows">3</property>
+        <property name="n_columns">17</property>
+        <property name="border_width">5</property>
       </object>
     </child>
   </template>
