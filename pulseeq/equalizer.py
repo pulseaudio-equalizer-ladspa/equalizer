@@ -159,6 +159,16 @@ class Equalizer(Gtk.ApplicationWindow):
         for i in range(1, num_ladspa_controls + 1):
             self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i - 1])) + '\ndB</small>')
 
+        if self.apply_event_source is not None:
+            GLib.source_remove (self.apply_event_source);
+
+        self.apply_event_source = GLib.timeout_add (500, self.on_apply_event)
+
+    def on_apply_event(self):
+        ApplySettings()
+        self.apply_event_source = None
+        return False
+
     @Gtk.Template.Callback()
     def on_presetsbox(self, widget):
         global preset
@@ -222,10 +232,6 @@ class Equalizer(Gtk.ApplicationWindow):
             self.lookup_action('save').set_enabled(False)
         else:
             self.lookup_action('save').set_enabled(preset != '')
-
-    @Gtk.Template.Callback()
-    def on_applysettings(self, widget):
-        ApplySettings()
 
     def on_resetsettings(self, action=None, param=None):
         print('Resetting to defaults...')
@@ -325,6 +331,8 @@ class Equalizer(Gtk.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         super(Equalizer, self).__init__(*args, **kwargs)
         GetSettings()
+
+        self.apply_event_source = None
 
         # Preamp widget
         global preampscale
