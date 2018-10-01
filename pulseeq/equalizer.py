@@ -324,10 +324,6 @@ class Equalizer(Gtk.ApplicationWindow):
 
         action.set_enabled(False)
 
-    @Gtk.Template.Callback()
-    def on_quit(self, object=None, param=None):
-        Gio.Application.get_default().quit()
-
     def __init__(self, *args, **kwargs):
         super(Equalizer, self).__init__(*args, **kwargs)
         GetSettings()
@@ -387,9 +383,9 @@ class Equalizer(Gtk.ApplicationWindow):
             scalevalue = Gtk.Label()
             self.scalevalues[x] = scalevalue
             scalevalue.set_markup('<small>' + str(scale.get_value())  + '\ndB</small>')
-            self.table.attach(label, x + 2, x + 3, 0, 1)
+            self.table.attach(label, x + 2, x + 3, 0, 1, Gtk.AttachOptions.SHRINK, Gtk.AttachOptions.SHRINK)
             self.table.attach(scale, x + 2, x + 3, 1, 2)
-            self.table.attach(scalevalue, x + 2, x + 3, 2, 3)
+            self.table.attach(scalevalue, x + 2, x + 3, 2, 3, Gtk.AttachOptions.SHRINK, Gtk.AttachOptions.SHRINK)
             label.show()
             scale.show()
             scalevalue.show()
@@ -443,7 +439,7 @@ class Application(Gtk.Application):
         self.add_action(action)
 
         action = Gio.SimpleAction.new('quit', None)
-        action.connect('activate', self.window.on_quit)
+        action.connect('activate', self.on_quit)
         self.add_action(action)
 
     def do_activate(self):
@@ -457,3 +453,6 @@ class Application(Gtk.Application):
         persistence = int(state.get_boolean())
         ApplySettings()
         action.set_state(state)
+
+    def on_quit(self, action, param):
+        Gio.Application.get_default().quit()
