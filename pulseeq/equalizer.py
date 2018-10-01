@@ -173,6 +173,8 @@ class Equalizer(Gtk.ApplicationWindow):
         global ladspa_inputs
         preset = self.presetsbox.get_child().get_text()
 
+        self.lookup_action('remove').set_enabled(False)
+
         presetmatch = ''
         for i in range(len(rawpresets)):
             if rawpresets[i] == preset:
@@ -184,6 +186,7 @@ class Equalizer(Gtk.ApplicationWindow):
                 f = open(presetdir1 + '/' + preset + '.preset', 'r')
                 rawdata = f.read().split('\n')
                 f.close
+                self.lookup_action('remove').set_enabled(True)
             elif os.path.isfile(presetdir2 + '/' + preset + '.preset'):
                 f = open(presetdir2 + '/' + preset + '.preset', 'r')
                 rawdata = f.read().split('\n')
@@ -278,6 +281,7 @@ class Equalizer(Gtk.ApplicationWindow):
                 self.presetsbox.append_text(rawpresets[i])
 
             action.set_enabled(False)
+            self.lookup_action('remove').set_enabled(True)
 
     def on_preampscale(self, widget):
         global preamp
@@ -292,58 +296,27 @@ class Equalizer(Gtk.ApplicationWindow):
         ApplySettings()
         action.set_state(state)
 
-    def on_removepreset(self, action=None, param=None):
+    def on_removepreset(self, action, param):
         global preset
-        global presets
-        dialog = Gtk.FileChooserDialog(title='Choose preset to remove...',
-                                       action=Gtk.FileChooserAction.OPEN)
-        dialog.add_buttons("_Cancel", Gtk.ResponseType.CANCEL,
-                           "_OK", Gtk.ResponseType.OK)
-        dialog.set_default_response(Gtk.ResponseType.OK)
+        os.remove(presetdir1 + '/' + preset + '.preset')
 
-        filter = Gtk.FileFilter()
-        filter.set_name('Preset files')
-        filter.add_pattern('*.preset')
-        dialog.add_filter(filter)
-        dialog.set_current_folder(presetdir1)
-        dialog.show()
+        self.presetsbox.get_child().set_text('')
 
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            filename = dialog.get_filename()
-            path_and_name = os.path.split(filename)
-            name = path_and_name[1]
-            os.remove(filename)
+        # Clear preset list from ComboBox
+        self.presetsbox.remove_all()
 
-            # Make a note of the current preset, then clear it temporarily
-            preset = self.presetsbox.get_child().get_text()
-            realpreset = preset
-            preset = ''
-            self.presetsbox.get_child().set_text('')
+        # Refresh (and therefore, sort) preset list
+        GetSettings()
 
-            # Clear preset list from ComboBox
-            self.presetsbox.remove_all()
+        # Repopulate preset list into ComboBox
+        for i in range(len(rawpresets)):
+            self.presetsbox.append_text(rawpresets[i])
 
-            # Refresh (and therefore, sort) preset list
-            GetSettings()
+        preset = ''
+        # Apply settings
+        ApplySettings()
 
-            # Clear preset (if it is the same as removed preset), or restore preset
-            if presetdir1 + '/' + preset + '.preset' == filename:
-                preset = ''
-            else:
-                preset = realpreset
-
-            # Restore preset
-            self.presetsbox.get_child().set_text(preset)
-
-            # Repopulate preset list into ComboBox
-            for i in range(len(rawpresets)):
-                self.presetsbox.append_text(rawpresets[i])
-
-            # Apply settings
-            ApplySettings()
-
-        dialog.destroy()
+        action.set_enabled(False)
 
     @Gtk.Template.Callback()
     def on_quit(self, object=None, param=None):
@@ -418,6 +391,11 @@ class Equalizer(Gtk.ApplicationWindow):
         action.connect('activate', self.on_savepreset)
         self.add_action(action)
 
+        action = Gio.SimpleAction.new('remove', None)
+        action.set_enabled(False)
+        action.connect('activate', self.on_removepreset)
+        self.add_action(action)
+
         self.presetsbox.get_child().set_text(preset)
         for i in range(len(rawpresets)):
             self.presetsbox.append_text(rawpresets[i])
@@ -448,10 +426,6 @@ class Application(Gtk.Application):
 
         action = Gio.SimpleAction.new('resetsettings', None)
         action.connect('activate', self.window.on_resetsettings)
-        self.add_action(action)
-
-        action = Gio.SimpleAction.new('removepreset', None)
-        action.connect('activate', self.window.on_removepreset)
         self.add_action(action)
 
         global persistence

@@ -7,10 +7,6 @@
         <attribute name="action">app.resetsettings</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">Remove user preset…</attribute>
-        <attribute name="action">app.removepreset</attribute>
-      </item>
-      <item>
         <attribute name="label" translatable="yes">Keep Settings</attribute>
         <attribute name="action">app.keepsettings</attribute>
       </item>

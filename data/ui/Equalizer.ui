@@ -26,6 +26,23 @@
             </child>
           </object>
         </child>
+        <child>
+          <object class="GtkButton">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="action_name">win.remove</property>
+            <property name="tooltip-text">Remove current preset</property>
+            <style>
+              <class name="destructive-action"/>
+            </style>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="icon-name">user-trash-symbolic</property>
+              </object>
+            </child>
+          </object>
+        </child>
         <child type="title">
           <object class="GtkComboBoxText" id="presetsbox">
             <property name="visible">True</property>
