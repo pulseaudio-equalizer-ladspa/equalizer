@@ -68,11 +68,11 @@
       </object>
     </child>
     <child>
-      <object class="GtkTable" id="table">
+      <object class="GtkGrid" id="grid">
         <property name="visible">True</property>
-        <property name="n_rows">3</property>
-        <property name="n_columns">17</property>
-        <property name="border_width">5</property>
+        <property name="margin">5</property>
+        <property name="margin_top">10</property>
+        <property name="margin_bottom">10</property>
       </object>
     </child>
   </template>
