@@ -143,7 +143,7 @@ def FormatLabels(x):
 class Equalizer(Gtk.ApplicationWindow):
     __gtype_name__= "Equalizer"
 
-    table = Gtk.Template.Child()
+    grid = Gtk.Template.Child()
     presetsbox = Gtk.Template.Child()
 
     def on_scale(self, widget, y):
@@ -333,30 +333,24 @@ class Equalizer(Gtk.ApplicationWindow):
         # Preamp widget
         global preampscale
         global preampscalevalue
-        preampscale = Gtk.Scale(orientation=Gtk.Orientation.VERTICAL)
-        preampscale.set_draw_value(0)
-        preampscale.set_inverted(1)
+        preampscale = Gtk.Scale(orientation=Gtk.Orientation.VERTICAL,
+                                draw_value=False, inverted=True, digits=1)
         preampscale.set_value_pos(Gtk.PositionType.BOTTOM)
         preampscale.set_range(0.0, 2.0)
         preampscale.set_increments(1, 0.1)
-        preampscale.set_digits(1)
         preampscale.set_size_request(35, 200)
         preampscale.set_value(float(preamp))
         preampscale.connect('value-changed', self.on_preampscale)
-        label = Gtk.Label()
-        label.set_markup('<small>Preamp</small>')
-        preampscalevalue = Gtk.Label()
-        preampscalevalue.set_markup(str(preampscale.get_value()) + 'x')
-        self.table.attach(label, 1, 2, 0, 1)
-        self.table.attach(preampscale, 1, 2, 1, 2)
-        self.table.attach(preampscalevalue, 1, 2, 2, 3)
-        # label.show()
-        # preampscale.show()
-        # preampscalevalue.show()
+        label = Gtk.Label(use_markup=True, label='<small>Preamp</small>')
+        preampscalevalue = Gtk.Label(use_markup=True,
+                                     label=str(preampscale.get_value()) + 'x')
+        self.grid.attach(label, 0, 0, 1, 1)
+        self.grid.attach(preampscale, 0, 1, 1, 2)
+        self.grid.attach(preampscalevalue, 0, 3, 1, 1)
 
         # Separator between preamp and bands
         separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-        self.table.attach(separator, 2, 3, 1, 2)
+        self.grid.attach(separator, 1, 0, 1, 3)
         # separator.show()
 
         # Equalizer bands
@@ -365,30 +359,25 @@ class Equalizer(Gtk.ApplicationWindow):
         self.labels = {}
         self.scalevalues = {}
         for x in range(1, num_ladspa_controls + 1):
-            scale = Gtk.Scale(orientation=Gtk.Orientation.VERTICAL)
+            scale = Gtk.Scale(orientation=Gtk.Orientation.VERTICAL,
+                              draw_value=False, inverted=True, digits=1,
+                              expand=True, visible=True)
             self.scales[x] = scale
-            scale.set_draw_value(0)
-            scale.set_inverted(1)
-            scale.set_value_pos(Gtk.PositionType.BOTTOM)
             scale.set_range(float(ranges[0]), float(ranges[1]))
             scale.set_increments(1, 0.1)
-            scale.set_digits(1)
             scale.set_size_request(35, 200)
             scale.set_value(float(ladspa_controls[x - 1]))
             scale.connect('value-changed', self.on_scale, x)
             FormatLabels(x)
-            label = Gtk.Label()
+            label = Gtk.Label(use_markup=True, visible=True,
+                label = '<small>' + whitespace1 + c + '\n'  + whitespace2 + suffix + '</small>')
             self.labels[x] = label
-            label.set_markup('<small>' + whitespace1 + c + '\n'  + whitespace2 + suffix + '</small>')
-            scalevalue = Gtk.Label()
+            scalevalue = Gtk.Label(visible=True, use_markup=True,
+                label='<small>' + str(scale.get_value())  + '\ndB</small>')
             self.scalevalues[x] = scalevalue
-            scalevalue.set_markup('<small>' + str(scale.get_value())  + '\ndB</small>')
-            self.table.attach(label, x + 2, x + 3, 0, 1, Gtk.AttachOptions.SHRINK, Gtk.AttachOptions.SHRINK)
-            self.table.attach(scale, x + 2, x + 3, 1, 2)
-            self.table.attach(scalevalue, x + 2, x + 3, 2, 3, Gtk.AttachOptions.SHRINK, Gtk.AttachOptions.SHRINK)
-            label.show()
-            scale.show()
-            scalevalue.show()
+            self.grid.attach(label, x + 1, 0, 1, 1)
+            self.grid.attach(scale, x + 1, 1, 1, 2)
+            self.grid.attach(scalevalue, x + 1, 3, 1, 1)
 
         action = Gio.SimpleAction.new('save', None)
         action.set_enabled(False)
