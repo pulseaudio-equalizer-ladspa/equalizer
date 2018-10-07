@@ -7,39 +7,39 @@
 #
 
 # Default LADSPA plugin & control settings; settings will be overridden if $CONFIG_NAME file exists.
-PA_LADSPA_PLUGIN="mbeq_1197"
-PA_LADSPA_PLUGIN_NAME="Multiband EQ"
-PA_LADSPA_LABEL="mbeq"
-PA_NUM_LADSPA_INPUTS="15"
-PA_LADSPA_CONTROLS="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
-PA_LADSPA_INPUTS="50,100,156,220,311,440,622,880,1250,1750,2500,3500,5000,10000,20000"
-PA_CONTROL_MIN="-30"
-PA_CONTROL_MAX="30"
-PA_PREAMP="1.0"
-PA_CURRENT_PRESET=""
+PA_LADSPA_PLUGIN='mbeq_1197'
+PA_LADSPA_PLUGIN_NAME='Multiband EQ'
+PA_LADSPA_LABEL='mbeq'
+PA_NUM_LADSPA_INPUTS='15'
+PA_LADSPA_CONTROLS='0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
+PA_LADSPA_INPUTS='50,100,156,220,311,440,622,880,1250,1750,2500,3500,5000,10000,20000'
+PA_CONTROL_MIN='-30'
+PA_CONTROL_MAX='30'
+PA_PREAMP='1.0'
+PA_CURRENT_PRESET=''
 
 if [ -z "$XDG_CONFIG_HOME" ]; then
-  CONFIG_DIR=$HOME/.config/pulse
+  CONFIG_DIR="$HOME"/.config/pulse
 else
-  CONFIG_DIR=$XDG_CONFIG_HOME/pulse
+  CONFIG_DIR="$XDG_CONFIG_HOME"/pulse
 fi
-PRESET_DIR1=$CONFIG_DIR/presets
-PRESET_DIR2=@pkgdatadir@/presets
+PRESET_DIR1="$CONFIG_DIR"/presets
+PRESET_DIR2="@pkgdatadir@"/presets
 SCRIPT_NAME=pulseaudio-equalizer
-SCRIPT_VERSION="4.0 (29.01.2017)"
-CONFIG_NAME=$CONFIG_DIR/equalizerrc
-LOG_NAME=$HOME/pulseaudio-equalizer.log
+SCRIPT_VERSION='4.0 (29.01.2017)'
+CONFIG_NAME="$CONFIG_DIR"/equalizerrc
+LOG_NAME="$HOME"/pulseaudio-equalizer.log
 
 # Don't execute the script with elevated privileges
 if [[ ! $EUID -ne 0 ]]; then
-   echo "This script must not be run as root!" 1>&2
-   exit 1
+  echo "This script must not be run as root!" 1>&2
+  exit 1
 fi
 
 # PyGTK Interface - Reset Settings
-if [ "$1" = "interface.resetsettings" ]; then
+if [ "$1" = 'interface.resetsettings' ]; then
   # Convert commas into newlines and dump all settings to configuration file
-  echo $PA_LADSPA_PLUGIN,$PA_LADSPA_LABEL,$PA_LADSPA_PLUGIN_NAME,$PA_PREAMP,$PA_CURRENT_PRESET,$PA_EQUALIZER_STATUS,$PA_EQUALIZER_PERSISTENCE,$PA_CONTROL_MIN,$PA_CONTROL_MAX,$PA_NUM_LADSPA_INPUTS,$PA_LADSPA_CONTROLS,$PA_LADSPA_INPUTS | sed 's/,/\n/g' >$CONFIG_NAME
+  echo "$PA_LADSPA_PLUGIN,$PA_LADSPA_LABEL,$PA_LADSPA_PLUGIN_NAME,$PA_PREAMP,$PA_CURRENT_PRESET,$PA_EQUALIZER_STATUS,$PA_EQUALIZER_PERSISTENCE,$PA_CONTROL_MIN,$PA_CONTROL_MAX,$PA_NUM_LADSPA_INPUTS,$PA_LADSPA_CONTROLS,$PA_LADSPA_INPUTS" | sed 's/,/\n/g' >"$CONFIG_NAME"
 
   $SCRIPT_NAME disable-config
   $SCRIPT_NAME disable
@@ -47,13 +47,13 @@ if [ "$1" = "interface.resetsettings" ]; then
 fi
 
 # If $CONFIG_NAME file exists, override built-in control settings with user-customized values
-if [ -f $CONFIG_NAME ]; then
+if [ -f "$CONFIG_NAME" ]; then
   # Read configuration file into "MYARRAY" array
   index=0
-  while read line ; do
+  while read -r line ; do
     MYARRAY[$index]="$line"
     index=$(($index+1))
-  done < $CONFIG_NAME
+  done < "$CONFIG_NAME"
 
   # Grab simple values
   PA_LADSPA_PLUGIN="${MYARRAY[0]}"
@@ -70,7 +70,7 @@ if [ -f $CONFIG_NAME ]; then
   # Unpack controls from array
   index=0
   current=10
-  while [ $index -lt $PA_NUM_LADSPA_INPUTS ]; do
+  while [ $index -lt "$PA_NUM_LADSPA_INPUTS" ]; do
     RAWDATA1="$RAWDATA1 ${MYARRAY[$current]}"
     index=$(($index+1))
     current=$(($current+1))
@@ -81,7 +81,7 @@ if [ -f $CONFIG_NAME ]; then
   # Unpack inputs from array
   index=0
   current=$((10+$PA_NUM_LADSPA_INPUTS))
-  while [ $index -lt $PA_NUM_LADSPA_INPUTS ]; do 
+  while [ $index -lt "$PA_NUM_LADSPA_INPUTS" ]; do
     RAWDATA2="$RAWDATA2 ${MYARRAY[$current]}"
     index=$(($index+1))
     current=$(($current+1))
@@ -91,21 +91,21 @@ if [ -f $CONFIG_NAME ]; then
 fi
 
 # PyGTK Interface - Apply Settings
-if [ "$1" = "interface.applysettings" ]; then
+if [ "$1" = 'interface.applysettings' ]; then
   # Process new settings
-  if [ "$PA_EQUALIZER_PERSISTENCE" = "1" ]; then
-    echo "Enabling persistence..."
+  if [ "$PA_EQUALIZER_PERSISTENCE" = '1' ]; then
+    echo 'Enabling persistence...'
     $SCRIPT_NAME enable-config
-  elif [ "$PA_EQUALIZER_PERSISTENCE" = "0" ]; then
-    echo "Disabling persistence..."
+  elif [ "$PA_EQUALIZER_PERSISTENCE" = '0' ]; then
+    echo 'Disabling persistence...'
     $SCRIPT_NAME disable-config
   fi
 
-  if [ "$PA_EQUALIZER_STATUS" = "1" ]; then
-    echo "Enabling..."
+  if [ "$PA_EQUALIZER_STATUS" = '1' ]; then
+    echo 'Enabling...'
     $SCRIPT_NAME enable
-  elif [ "$PA_EQUALIZER_STATUS" = "0" ]; then
-    echo "Disabling..."
+  elif [ "$PA_EQUALIZER_STATUS" = '0' ]; then
+    echo 'Disabling...'
     $SCRIPT_NAME disable
   fi
   exit
@@ -113,7 +113,7 @@ fi
 
 # Get sink names and volumes
 PA_LADSPA_SINK="ladspa_output.$PA_LADSPA_PLUGIN.$PA_LADSPA_LABEL"
-PA_CURRENT_SINK=$(pacmd stat | grep --color=never "Default sink name" | sed 's/Default sink name: //g')
+PA_CURRENT_SINK=$(pacmd stat | grep --color=never 'Default sink name' | sed 's/Default sink name: //g')
 PA_CURRENT_VOLUME=$(pacmd list | grep --color=never -A20 "<$PA_CURRENT_SINK>" | grep --color=never -m1 'volume: ' | grep --color=never -Po '(\d+)%' | awk 'NR==1{sub(/%/,"",$1); print $1}')
 PA_REAL_VOLUME=$((PA_CURRENT_VOLUME*65536/100))
 PA_REAL_PREAMP_FLOAT=$(echo "$PA_PREAMP*65536" | bc)
@@ -130,8 +130,8 @@ else
 fi
 
 # Check if equalizer is set as persistent
-if [ -f $CONFIG_DIR/default.pa ]; then
-  if [ "$(cat $CONFIG_DIR/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
+if [ -f "$CONFIG_DIR"/default.pa ]; then
+  if [ "$(grep -m1 '### BEGIN: Equalized audio configuration' "$CONFIG_DIR"/default.pa)" = '### BEGIN: Equalized audio configuration' ]; then
     PA_EQUALIZER_PERSISTENCE=1
   else
     PA_EQUALIZER_PERSISTENCE=0
@@ -141,146 +141,145 @@ else
 fi
 
 # DEBUG
-if [ "$1" = "debug" ]; then
-  echo "Please wait (approximate time: 25 seconds)..."
+if [ "$1" = 'debug' ]; then
+  echo 'Please wait (approximate time: 25 seconds)...'
   sleep 3
-  echo >$LOG_NAME "State: Initial state"
-  echo >>$LOG_NAME "---"
-  $SCRIPT_NAME log >>$LOG_NAME
+  echo >"$LOG_NAME" 'State: Initial state'
+  echo >>"$LOG_NAME" '---'
+  "$SCRIPT_NAME" log >>"$LOG_NAME"
 
-  $SCRIPT_NAME disable-config >/dev/null
+  "$SCRIPT_NAME" disable-config >/dev/null
   pulseaudio -k
   sleep 10
 
   # Disabled/not saved
-  $SCRIPT_NAME disable >/dev/null
-  $SCRIPT_NAME disable-config >/dev/null
+  "$SCRIPT_NAME" disable >/dev/null
+  "$SCRIPT_NAME" disable-config >/dev/null
   sleep 3
-  echo >>$LOG_NAME "State: Disabled [not saved]"
-  echo >>$LOG_NAME "---"
-  $SCRIPT_NAME log >>$LOG_NAME
+  echo >>"$LOG_NAME" 'State: Disabled [not saved]'
+  echo >>"$LOG_NAME" '---'
+  "$SCRIPT_NAME" log >>"$LOG_NAME"
 
   # Enabled/not saved
-  $SCRIPT_NAME enable >/dev/null
-  $SCRIPT_NAME disable-config >/dev/null
+  "$SCRIPT_NAME" enable >/dev/null
+  "$SCRIPT_NAME" disable-config >/dev/null
   sleep 3
-  echo >>$LOG_NAME "State: Enabled [not saved]"
-  echo >>$LOG_NAME "---"
-  $SCRIPT_NAME log >>$LOG_NAME
+  echo >>"$LOG_NAME" 'State: Enabled [not saved]'
+  echo >>"$LOG_NAME" '---'
+  "$SCRIPT_NAME" log >>"$LOG_NAME"
 
   # Disabled/saved
-  $SCRIPT_NAME disable >/dev/null
-  $SCRIPT_NAME enable-config >/dev/null
+  "$SCRIPT_NAME" disable >/dev/null
+  "$SCRIPT_NAME" enable-config >/dev/null
   sleep 3
-  echo >>$LOG_NAME "State: Disabled [saved]"
-  echo >>$LOG_NAME "---"
-  $SCRIPT_NAME log >>$LOG_NAME
+  echo >>"$LOG_NAME" 'State: Disabled [saved]'
+  echo >>"$LOG_NAME" '---'
+  "$SCRIPT_NAME" log >>"$LOG_NAME"
 
   # Enabled/saved
-  $SCRIPT_NAME enable >/dev/null
-  $SCRIPT_NAME enable-config >/dev/null
+  "$SCRIPT_NAME" enable >/dev/null
+  "$SCRIPT_NAME" enable-config >/dev/null
   sleep 3
-  echo >>$LOG_NAME "State: Enabled [saved]"
-  echo >>$LOG_NAME "---"
-  $SCRIPT_NAME log >>$LOG_NAME
+  echo >>"$LOG_NAME" 'State: Enabled [saved]'
+  echo >>"$LOG_NAME" '---'
+  "$SCRIPT_NAME" log >>"$LOG_NAME"
 
   echo "Finished! Log created at $LOG_NAME."
   exit
 fi
 
-if [ "$1" = "log" ]; then
-  echo SCRIPT_VERSION=$SCRIPT_VERSION
-  echo PA_LADSPA_PLUGIN=$PA_LADSPA_PLUGIN
-  echo PA_LADSPA_LABEL=$PA_LADSPA_LABEL
-  echo PA_LADSPA_PLUGIN_NAME=$PA_LADSPA_PLUGIN_NAME
-  echo PA_CURRENT_PRESET=$PA_CURRENT_PRESET
-  echo PA_EQUALIZER_STATUS=$PA_EQUALIZER_STATUS
-  echo PA_EQUALIZER_PERSISTENCE=$PA_EQUALIZER_PERSISTENCE
-  echo PA_NUM_LADSPA_INPUTS=$PA_NUM_LADSPA_INPUTS
-  echo PA_LADSPA_CONTROLS=$PA_LADSPA_CONTROLS
-  echo PA_LADSPA_INPUTS=$PA_LADSPA_INPUTS
-  echo PA_CONTROL_MIN=$PA_CONTROL_MIN
-  echo PA_CONTROL_MAX=$PA_CONTROL_MAX
+if [ "$1" = 'log' ]; then
+  echo "SCRIPT_VERSION=$SCRIPT_VERSION"
+  echo "PA_LADSPA_PLUGIN=$PA_LADSPA_PLUGIN"
+  echo "PA_LADSPA_LABEL=$PA_LADSPA_LABEL"
+  echo "PA_LADSPA_PLUGIN_NAME=$PA_LADSPA_PLUGIN_NAME"
+  echo "PA_CURRENT_PRESET=$PA_CURRENT_PRESET"
+  echo "PA_EQUALIZER_STATUS=$PA_EQUALIZER_STATUS"
+  echo "PA_EQUALIZER_PERSISTENCE=$PA_EQUALIZER_PERSISTENCE"
+  echo "PA_NUM_LADSPA_INPUTS=$PA_NUM_LADSPA_INPUTS"
+  echo "PA_LADSPA_CONTROLS=$PA_LADSPA_CONTROLS"
+  echo "PA_LADSPA_INPUTS=$PA_LADSPA_INPUTS"
+  echo "PA_CONTROL_MIN=$PA_CONTROL_MIN"
+  echo "PA_CONTROL_MAX=$PA_CONTROL_MAX"
 
-  echo PA_MASTER_SINK=$PA_MASTER_SINK
-  echo PA_LADSPA_SINK=$PA_LADSPA_SINK
-  echo PA_CURRENT_SINK=$PA_CURRENT_SINK
-  echo PA_CURRENT_MUTE=$PA_CURRENT_MUTE
-  echo PA_CURRENT_VOLUME=$PA_CURRENT_VOLUME
-  echo PA_REAL_VOLUME=$PA_REAL_VOLUME
-  echo PA_PREAMP=$PA_PREAMP
-  echo PA_REAL_PREAMP=$PA_REAL_PREAMP
+  echo "PA_MASTER_SINK=$PA_MASTER_SINK"
+  echo "PA_LADSPA_SINK=$PA_LADSPA_SINK"
+  echo "PA_CURRENT_SINK=$PA_CURRENT_SINK"
+  echo "PA_CURRENT_MUTE=$PA_CURRENT_MUTE"
+  echo "PA_CURRENT_VOLUME=$PA_CURRENT_VOLUME"
+  echo "PA_REAL_VOLUME=$PA_REAL_VOLUME"
+  echo "PA_PREAMP=$PA_PREAMP"
+  echo "PA_REAL_PREAMP=$PA_REAL_PREAMP"
 
-  if [ -f $CONFIG_DIR/default.pa ]; then
-    tail -n7 $CONFIG_DIR/default.pa
+  if [ -f "$CONFIG_DIR"/default.pa ]; then
+    tail -n7 "$CONFIG_DIR"/default.pa
   fi
 
-  echo "---"
-  echo ""
+  echo '---'
+  echo ''
   exit
 fi
 
 # PyGTK Interface - Get Settings
-if [ "$1" = "interface.getsettings" ]; then
+if [ "$1" = 'interface.getsettings' ]; then
   # Ensure that user config directory exists
-  if [ ! -d $CONFIG_DIR ]; then
-    mkdir -p $CONFIG_DIR
+  if [ ! -d "$CONFIG_DIR" ]; then
+    mkdir -p "$CONFIG_DIR"
   fi
 
   # Convert commas into newlines and dump all settings to configuration file
-  echo $PA_LADSPA_PLUGIN,$PA_LADSPA_LABEL,$PA_LADSPA_PLUGIN_NAME,$PA_PREAMP,$PA_CURRENT_PRESET,$PA_EQUALIZER_STATUS,$PA_EQUALIZER_PERSISTENCE,$PA_CONTROL_MIN,$PA_CONTROL_MAX,$PA_NUM_LADSPA_INPUTS,$PA_LADSPA_CONTROLS,$PA_LADSPA_INPUTS | sed 's/,/\n/g' >$CONFIG_NAME
+  echo "$PA_LADSPA_PLUGIN,$PA_LADSPA_LABEL,$PA_LADSPA_PLUGIN_NAME,$PA_PREAMP,$PA_CURRENT_PRESET,$PA_EQUALIZER_STATUS,$PA_EQUALIZER_PERSISTENCE,$PA_CONTROL_MIN,$PA_CONTROL_MAX,$PA_NUM_LADSPA_INPUTS,$PA_LADSPA_CONTROLS,$PA_LADSPA_INPUTS" | sed 's/,/\n/g' >"$CONFIG_NAME"
 
   # Ensure that user preset directory exists
-  if [ ! -d $PRESET_DIR1 ]; then
-    mkdir -p $PRESET_DIR1
+  if [ ! -d "$PRESET_DIR1" ]; then
+    mkdir -p "$PRESET_DIR1"
   fi
 
   # Generate list of available presets (system)
-  ls -x1 $PRESET_DIR2/*.preset | sed "s|$PRESET_DIR2/||g" | sed 's/.preset//g' >$CONFIG_NAME.availablepresets.unsorted
+  find "$PRESET_DIR2" -name '*.preset' -type f | sed "s|$PRESET_DIR2/||g" | sed 's/.preset//g' >"$CONFIG_NAME".availablepresets.unsorted
 
   # Generate list of available presets (user)
-  ls -x1 $PRESET_DIR1/*.preset | sed "s|$PRESET_DIR1/||g" | sed 's/.preset//g' >>$CONFIG_NAME.availablepresets.unsorted
+  find "$PRESET_DIR1" -name '*.preset' -type f | sed "s|$PRESET_DIR1/||g" | sed 's/.preset//g' >>"$CONFIG_NAME".availablepresets.unsorted
 
   # Sort list
-  sort $CONFIG_NAME.availablepresets.unsorted >$CONFIG_NAME.availablepresets
-  rm $CONFIG_NAME.availablepresets.unsorted
+  sort "$CONFIG_NAME".availablepresets.unsorted >"$CONFIG_NAME".availablepresets
+  rm "$CONFIG_NAME".availablepresets.unsorted
   exit
 fi
 
 # Toggle equalizer on/off
-if [ "$1" = "toggle" -a "$PA_EQUALIZER_STATUS" = "1" ]; then
-  $SCRIPT_NAME disable
+if [ "$1" = 'toggle' ] && [ "$PA_EQUALIZER_STATUS" = '1' ]; then
+  "$SCRIPT_NAME" disable
   exit
-else if [ "$1" = "toggle" -a "$PA_EQUALIZER_STATUS" = "0" ]; then
-  $SCRIPT_NAME enable
+elif [ "$1" = 'toggle' ] && [ "$PA_EQUALIZER_STATUS" = '0' ]; then
+  "$SCRIPT_NAME" enable
   exit
-  fi
 fi
 
-if [ "$1" = "enable-config" ]; then
+if [ "$1" = 'enable-config' ]; then
   # Enable the equalizer (if necessary)
-  #$SCRIPT_NAME enable
+  #"$SCRIPT_NAME" enable
 
-  echo "Current operation: saving configuration (enable-config)"
-  echo "-------------------------------------"
+  echo 'Current operation: saving configuration (enable-config)'
+  echo '-------------------------------------'
 
   # If equalizer configuration is already set, delete file
-  if [ -f $CONFIG_DIR/default.pa ]; then
-    if [ "$(cat $CONFIG_DIR/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
+  if [ -f "$CONFIG_DIR"/default.pa ]; then
+    if [ "$(grep -m1 '### BEGIN: Equalized audio configuration' "$CONFIG_DIR"/default.pa)" = '### BEGIN: Equalized audio configuration' ]; then
       echo "Equalizer definition detected in file '$CONFIG_DIR/default.pa', deleting..."
-      rm $CONFIG_DIR/default.pa
+      rm "$CONFIG_DIR"/default.pa
     fi
   fi
 
   # Make a backup of configuration if necessary
-  if [ -f $CONFIG_DIR/default.pa ]; then
+  if [ -f "$CONFIG_DIR"/default.pa ]; then
     echo "Found '$CONFIG_DIR/default.pa', making a copy..."
-    cp $CONFIG_DIR/default.pa $CONFIG_DIR/default.pa.noeq
+    cp "$CONFIG_DIR"/default.pa "$CONFIG_DIR"/default.pa.noeq
     CFG_SOURCE_FILE="$CONFIG_DIR/default.pa.noeq"
   fi
 
   # Decide which file to use as the configuration source
-  if [ -f $CONFIG_DIR/default.pa.noeq ]; then
+  if [ -f "$CONFIG_DIR"/default.pa.noeq ]; then
     echo "Found '$CONFIG_DIR/default.pa.noeq'..."
     CFG_SOURCE_FILE="$CONFIG_DIR/default.pa.noeq"
   else
@@ -290,70 +289,70 @@ if [ "$1" = "enable-config" ]; then
   echo "Using configuration file '$CFG_SOURCE_FILE' as source..."
 
   # Modify module-stream-restore line to disable cached sinks
-  cat $CFG_SOURCE_FILE | sed 's/load-module module-stream-restore/load-module module-stream-restore restore_device=false/g' >$CONFIG_DIR/default.pa
+  sed 's/load-module module-stream-restore/load-module module-stream-restore restore_device=false/g' "$CFG_SOURCE_FILE" >"$CONFIG_DIR"/default.pa
 
   # Add module-ladspa-sink definition
-  echo "" >>$CONFIG_DIR/default.pa
-  echo "### BEGIN: Equalized audio configuration" >>$CONFIG_DIR/default.pa
-  echo "### Generated from: $SCRIPT_NAME" >>$CONFIG_DIR/default.pa
-  echo ".nofail" >>$CONFIG_DIR/default.pa
-  echo "load-module module-ladspa-sink sink_name=$PA_LADSPA_SINK sink_master=$PA_MASTER_SINK plugin=$PA_LADSPA_PLUGIN label=$PA_LADSPA_LABEL control=$PA_LADSPA_CONTROLS" >>$CONFIG_DIR/default.pa
+  echo '' >>"$CONFIG_DIR"/default.pa
+  echo "### BEGIN: Equalized audio configuration" >>"$CONFIG_DIR"/default.pa
+  echo "### Generated from: $SCRIPT_NAME" >>"$CONFIG_DIR"/default.pa
+  echo '.nofail' >>"$CONFIG_DIR"/default.pa
+  echo "load-module module-ladspa-sink sink_name=$PA_LADSPA_SINK sink_master=$PA_MASTER_SINK plugin=$PA_LADSPA_PLUGIN label=$PA_LADSPA_LABEL control=$PA_LADSPA_CONTROLS" >>"$CONFIG_DIR"/default.pa
 
   # Set LADSPA sink as default sink & set appropriate master sink (preamp) volume
-  echo "set-default-sink $PA_LADSPA_SINK" >>$CONFIG_DIR/default.pa
-  #echo "set-sink-volume $PA_MASTER_SINK $PA_REAL_PREAMP" >>$CONFIG_DIR/default.pa
-  echo "set-sink-mute $PA_MASTER_SINK 0" >>$CONFIG_DIR/default.pa
-  echo ".endif" >>$CONFIG_DIR/default.pa
-  echo "### END: Equalized audio configuration" >>$CONFIG_DIR/default.pa
+  echo "set-default-sink $PA_LADSPA_SINK" >>"$CONFIG_DIR"/default.pa
+  #echo "set-sink-volume $PA_MASTER_SINK $PA_REAL_PREAMP" >>"$CONFIG_DIR"/default.pa
+  echo "set-sink-mute $PA_MASTER_SINK 0" >>"$CONFIG_DIR"/default.pa
+  echo '.endif' >>"$CONFIG_DIR"/default.pa
+  echo '### END: Equalized audio configuration' >>"$CONFIG_DIR"/default.pa
 
   echo "Equalizer setting saved (enable-config)."
   echo "-------------------------------------"
-  #$SCRIPT_NAME status
+  #"$SCRIPT_NAME" status
   exit
 fi
 
-if [ "$1" = "disable-config" ]; then
+if [ "$1" = 'disable-config' ]; then
   # Disable the equalizer (if necessary)
-  #$SCRIPT_NAME disable
+  #"$SCRIPT_NAME" disable
 
-  echo "Current operation: saving configuration (disable-config)"
-  echo "-------------------------------------"
+  echo 'Current operation: saving configuration (disable-config)'
+  echo '-------------------------------------'
 
   # Move .noeq configuration file if it exists
-  if [ -f $CONFIG_DIR/default.pa.noeq ]; then
+  if [ -f "$CONFIG_DIR"/default.pa.noeq ]; then
     echo "Found '$CONFIG_DIR/default.pa.noeq', moving..."
-    mv $CONFIG_DIR/default.pa.noeq $CONFIG_DIR/default.pa
+    mv "$CONFIG_DIR"/default.pa.noeq "$CONFIG_DIR"/default.pa
   fi
 
   # If equalizer configuration is present, delete file
-  if [ -f $CONFIG_DIR/default.pa ]; then
-    if [ "$(cat $CONFIG_DIR/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
-     echo "Equalizer definition detected, deleting '$CONFIG_DIR/default.pa'..."
-     rm $CONFIG_DIR/default.pa
-   fi
+  if [ -f "$CONFIG_DIR"/default.pa ]; then
+    if [ "$(grep -m1 '### BEGIN: Equalized audio configuration' "$CONFIG_DIR"/default.pa)" = '### BEGIN: Equalized audio configuration' ]; then
+      echo "Equalizer definition detected, deleting '$CONFIG_DIR/default.pa'..."
+      rm "$CONFIG_DIR"/default.pa
+    fi
   fi
 
-  echo "Equalizer setting saved (disable-config)."
-  echo "-------------------------------------"
-  #$SCRIPT_NAME status
+  echo 'Equalizer setting saved (disable-config).'
+  echo '-------------------------------------'
+  #"$SCRIPT_NAME" status
   exit
 fi
 
 echo "PulseAudio Equalizer/LADSPA Processor $SCRIPT_VERSION"
 
-if [ "$1" = "disable" -o "$1" = "enable" ]; then
-  echo "-------------------------------------"
-  echo "Current operation: disabling equalizer"
-  echo "-------------------------------------"
+if [ "$1" = 'disable' ] || [ "$1" = 'enable' ]; then
+  echo '-------------------------------------'
+  echo 'Current operation: disabling equalizer'
+  echo '-------------------------------------'
   echo -n >/tmp/eqcommands.sh
 
   # Unload & reload stream-restore module
-  echo "Unloading & reloading stream-restore module..."
+  echo 'Unloading & reloading stream-restore module...'
   echo >>/tmp/eqcommands.sh "unload-module $(pacmd list | grep -B1 -m1 'name: <module-stream-restore>' | grep '    index: ' | sed 's/    index: //g')"
-  echo >>/tmp/eqcommands.sh "load-module module-stream-restore"
+  echo >>/tmp/eqcommands.sh 'load-module module-stream-restore'
 
   # Unload LADSPA sink module (if it is already loaded)
-  echo "Unloading module-ladspa-sink..."
+  echo 'Unloading module-ladspa-sink...'
   echo >>/tmp/eqcommands.sh "unload-module $(pacmd list | grep -B1 -m1 'name: <module-ladspa-sink>' | grep '    index: ' | sed 's/    index: //g')"
 
   # Move active client sinks to ALSA sink
@@ -370,19 +369,19 @@ if [ "$1" = "disable" -o "$1" = "enable" ]; then
   pacmd </tmp/eqcommands.sh >/dev/null
 fi
 
-if [ "$1" = "enable" ]; then
-  echo "-------------------------------------"
-  echo "Current operation: enabling equalizer"
-  echo "-------------------------------------"
+if [ "$1" = 'enable' ]; then
+  echo '-------------------------------------'
+  echo 'Current operation: enabling equalizer'
+  echo '-------------------------------------'
   echo -n >/tmp/eqcommands.sh
 
   # Unload & reload stream-restore module with restore_device option disabled (to ensure that previously cached per-client sinks are not used)
-  echo "Unloading & reloading stream-restore module..."
+  echo 'Unloading & reloading stream-restore module...'
   echo >>/tmp/eqcommands.sh "unload-module $(pacmd list | grep -B1 -m1 'name: <module-stream-restore>' | grep '    index: ' | sed 's/    index: //g')"
-  echo >>/tmp/eqcommands.sh "load-module module-stream-restore restore_device=false"
+  echo >>/tmp/eqcommands.sh 'load-module module-stream-restore restore_device=false'
 
   # Load LADSPA sink module
-  echo "Loading module-ladspa-sink..."
+  echo 'Loading module-ladspa-sink...'
   echo >>/tmp/eqcommands.sh "load-module module-ladspa-sink sink_name=$PA_LADSPA_SINK master=$PA_MASTER_SINK plugin=$PA_LADSPA_PLUGIN label=$PA_LADSPA_LABEL control=$PA_LADSPA_CONTROLS"
 
   # Transfer current sink mute/volume to LADSPA sink
@@ -391,7 +390,7 @@ if [ "$1" = "enable" ]; then
   echo >>/tmp/eqcommands.sh "set-sink-mute $PA_LADSPA_SINK $PA_CURRENT_MUTE"
 
   # Unmute & set preamp level on ALSA sink (as LADSPA sink will act as primary volume control)
-  echo "Setting ALSA sink ($PA_MASTER_SINK) preamp ("$PA_PREAMP"x)..."
+  echo "Setting ALSA sink ($PA_MASTER_SINK) preamp (${PA_PREAMP}x)..."
   #echo >>/tmp/eqcommands.sh "set-sink-volume $PA_MASTER_SINK $PA_REAL_PREAMP"
   echo >>/tmp/eqcommands.sh "set-sink-mute $PA_MASTER_SINK 0"
 
@@ -407,77 +406,78 @@ if [ "$1" = "enable" ]; then
   pacmd </tmp/eqcommands.sh >/dev/null
 fi
 
-if [ "$1" = "" -o "$1" = "-h" -o "$1" = "--help" ]; then
+if [ "$1" = '' ] || [ "$1" = '-h' ] || [ "$1" = '--help' ]; then
   echo -e "Usage: $SCRIPT_NAME [option]"
   echo -e "WARNING: This is for internal use by the pulseaudio-equalizer-gtk interface."
   echo -e "         Use for debugging/troubleshooting purposes only."
   echo -e ""
   echo -e "Options (current session):"
-  echo -e "  enable\t\t enable the equalizer"
-  echo -e "  disable\t\t disable the equalizer"
-  echo -e "  toggle\t\t enable/disable the equalizer"
+  echo -e "  enable\\t\\t enable the equalizer"
+  echo -e "  disable\\t\\t disable the equalizer"
+  echo -e "  toggle\\t\\t enable/disable the equalizer"
   echo -e ""
   echo -e "Options (persistent):"
-  echo -e "  enable-config\t\t enable the equalizer configuration"
-  echo -e "  disable-config\t disable the equalizer configuration"
+  echo -e "  enable-config\\t\\t enable the equalizer configuration"
+  echo -e "  disable-config\\t disable the equalizer configuration"
   echo -e ""
   echo -e "Options (all):"
-  echo -e "  debug\t\t\t run equalizer diagnostics"
-  echo -e "  log\t\t\t show current equalizer log"
-  echo -e "  status\t\t show current equalizer status"
+  echo -e "  debug\\t\\t\\t run equalizer diagnostics"
+  echo -e "  log\\t\\t\\t show current equalizer log"
+  echo -e "  status\\t\\t show current equalizer status"
   echo -e ""
   exit
 fi
 
-if [ "$1" = "status" ]; then
- # Do nothing except show status
- echo -n
+if [ "$1" = 'status' ]; then
+  # Do nothing except show status
+  echo -n
 fi
 
 # Refresh current sink status and display equalizer information
-PA_CURRENT_SINK=$(pacmd stat | grep "Default sink name" | sed 's/Default sink name: //g')
+PA_CURRENT_SINK="$(pacmd stat | grep "Default sink name" | sed 's/Default sink name: //g')"
 if [ "$PA_CURRENT_SINK" = "$PA_LADSPA_SINK" ]; then
-  echo "-------------------------------------"
-  echo "Equalizer status: [enabled]"
+  echo '-------------------------------------'
+  echo 'Equalizer status: [enabled]'
 
-  if [ -f $CONFIG_DIR/default.pa ]; then
-    if [ "$(cat $CONFIG_DIR/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
-      echo "Equalizer configuration status: [enabled]"
+  if [ -f "$CONFIG_DIR"/default.pa ]; then
+    if [ "$(grep -m1 '### BEGIN: Equalized audio configuration' "$CONFIG_DIR"/default.pa)" = '### BEGIN: Equalized audio configuration' ]; then
+      echo 'Equalizer configuration status: [enabled]'
     else
-      echo "Equalizer configuration status: [disabled]"
+      echo 'Equalizer configuration status: [disabled]'
     fi
   else
-    echo "Equalizer configuration status: [disabled]"
+    echo 'Equalizer configuration status: [disabled]'
   fi
 
   echo "Equalizer plugin: [$PA_LADSPA_PLUGIN/$PA_LADSPA_LABEL]"
   echo "Equalizer control: [$PA_LADSPA_CONTROLS]"
 
-  if [ -f $CONFIG_NAME ]; then
+  if [ -f "$CONFIG_NAME" ]; then
     echo "NOTE: Using user-customized settings from '$CONFIG_NAME'..."
   fi
 
-  echo "-------------------------------------"
+  echo '-------------------------------------'
 else
-  echo "-------------------------------------"
-  echo "Equalizer status: [disabled]"
+  echo '-------------------------------------'
+  echo 'Equalizer status: [disabled]'
 
-  if [ -f $CONFIG_DIR/default.pa ]; then
-    if [ "$(cat $CONFIG_DIR/default.pa | grep -m1 "### BEGIN: Equalized audio configuration")" = "### BEGIN: Equalized audio configuration" ]; then
-      echo "Equalizer configuration status: [enabled]"
+  if [ -f "$CONFIG_DIR"/default.pa ]; then
+    if [ "$(grep -m1 '### BEGIN: Equalized audio configuration' "$CONFIG_DIR"/default.pa)" = '### BEGIN: Equalized audio configuration' ]; then
+      echo 'Equalizer configuration status: [enabled]'
       echo "Equalizer plugin: [$PA_LADSPA_PLUGIN/$PA_LADSPA_LABEL]"
       echo "Equalizer control: [$PA_LADSPA_CONTROLS]"
 
-      if [ -f $CONFIG_NAME ]; then
+      if [ -f "$CONFIG_NAME" ]; then
         echo "NOTE: Using user-customized settings from '$CONFIG_NAME'..."
       fi
 
     else
-      echo "Equalizer configuration status: [disabled]"
+      echo 'Equalizer configuration status: [disabled]'
     fi
   else
-    echo "Equalizer configuration status: [disabled]"
+    echo 'Equalizer configuration status: [disabled]'
   fi
 
-  echo "-------------------------------------"
+  echo '-------------------------------------'
 fi
+
