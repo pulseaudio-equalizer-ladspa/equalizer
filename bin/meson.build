@@ -17,3 +17,4 @@ configure_file(
     install: true,
     install_dir: bindir,
 )
+

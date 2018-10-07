@@ -1,5 +1,5 @@
-project('pulseaudio-equalizer',
-    version: '2.7.1',
+project('pulseaudio-equalizer-ladspa',
+    version: '2.7.2',
     meson_version: '>= 0.46.0'
 )
 
@@ -20,3 +20,4 @@ appdir = join_paths(pythondir, modname)
 subdir('bin')
 subdir('data')
 subdir(modname)
+
