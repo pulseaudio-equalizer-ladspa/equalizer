@@ -109,7 +109,7 @@ def FormatLabels(x):
     whitespace1 = ''
     whitespace2 = ''
 
-    current_input = int(ladspa_inputs[x - 1])
+    current_input = int(ladspa_inputs[x])
     if current_input < 99:
         a = current_input
         suffix = 'Hz'
@@ -151,13 +151,12 @@ class Equalizer(Gtk.ApplicationWindow):
         global preset
         global clearpreset
         newvalue = float(round(widget.get_value(), 1))
-        del ladspa_controls[y - 1]
-        ladspa_controls.insert(y - 1, newvalue)
+        ladspa_controls[y] = newvalue
         if clearpreset == 1:
             preset = ''
             self.presetsbox.get_child().set_text(preset)
-        for i in range(1, num_ladspa_controls + 1):
-            self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i - 1])) + '\ndB</small>')
+
+        self.scalevalues[y].set_markup('<small>' + str(float(ladspa_controls[y])) + '\ndB</small>')
 
         if self.apply_event_source is not None:
             GLib.source_remove (self.apply_event_source);
@@ -177,7 +176,6 @@ class Equalizer(Gtk.ApplicationWindow):
         global ladspa_filename
         global ladspa_name
         global ladspa_label
-        global preamp
         global num_ladspa_controls
         global ladspa_controls
         global ladspa_inputs
@@ -207,21 +205,17 @@ class Equalizer(Gtk.ApplicationWindow):
             ladspa_filename = str(rawdata[0])
             ladspa_name = str(rawdata[1])
             ladspa_label = str(rawdata[2])
-            #preamp = (rawdata[3])
             preset = str(rawdata[4])
             num_ladspa_controls = int(rawdata[5])
             ladspa_controls = rawdata[6:6 + num_ladspa_controls]
             ladspa_inputs = rawdata[6 + num_ladspa_controls:6 + num_ladspa_controls + num_ladspa_controls]
 
-            preampscale.set_value(float(preamp))
-            preampscalevalue.set_markup(str(preampscale.get_value())
-                    + 'x')
             clearpreset = ''
-            for i in range(1, num_ladspa_controls + 1):
-                self.scales[i].set_value(float(ladspa_controls[i - 1]))
+            for i in range(num_ladspa_controls):
+                self.scales[i].set_value(float(ladspa_controls[i]))
                 FormatLabels(i)
                 self.labels[i].set_markup('<small>' + whitespace1 + c + '\n' + whitespace2 + suffix + '</small>')
-                self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i - 1])) + '\ndB</small>')
+                self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i])) + '\ndB</small>')
 
             # Set preset again due to interference from scale modifications
             preset = str(rawdata[4])
@@ -241,12 +235,11 @@ class Equalizer(Gtk.ApplicationWindow):
         self.lookup_action('eqenabled').set_state(GLib.Variant('b', status))
         Gio.Application.get_default().lookup_action('keepsettings').set_state(GLib.Variant('b', persistence))
         self.presetsbox.get_child().set_text(preset)
-        preampscale.set_value(float(preamp))
-        for i in range(1, num_ladspa_controls + 1):
-            self.scales[i].set_value(float(ladspa_controls[i - 1]))
+        for i in range(num_ladspa_controls):
+            self.scales[i].set_value(float(ladspa_controls[i]))
             FormatLabels(i)
             self.labels[i].set_markup('<small>' + whitespace1 + c + '\n' + whitespace2 + suffix + '</small>')
-            self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i - 1])) + '\ndB</small>')
+            self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i])) + '\ndB</small>')
 
     def on_savepreset(self, action, param):
         global preset
@@ -261,7 +254,7 @@ class Equalizer(Gtk.ApplicationWindow):
             rawdata.append(str(ladspa_filename))
             rawdata.append(str(ladspa_name))
             rawdata.append(str(ladspa_label))
-            rawdata.append(str(preamp))
+            rawdata.append('')
             rawdata.append(str(preset))
             rawdata.append(str(num_ladspa_controls))
             for i in range(num_ladspa_controls):
@@ -288,13 +281,6 @@ class Equalizer(Gtk.ApplicationWindow):
 
             action.set_enabled(False)
             self.lookup_action('remove').set_enabled(True)
-
-    def on_preampscale(self, widget):
-        global preamp
-        preamp = float(round(widget.get_value(), 1))
-        preampscalevalue.set_markup(str(preamp) + 'x')
-        # preset = ''
-        # self.presetsbox.get_child().set_text(preset)
 
     def on_eqenabled(self, action, state):
         global status
@@ -330,35 +316,12 @@ class Equalizer(Gtk.ApplicationWindow):
 
         self.apply_event_source = None
 
-        # Preamp widget
-        global preampscale
-        global preampscalevalue
-        preampscale = Gtk.Scale(orientation=Gtk.Orientation.VERTICAL,
-                                draw_value=False, inverted=True, digits=1)
-        preampscale.set_value_pos(Gtk.PositionType.BOTTOM)
-        preampscale.set_range(0.0, 2.0)
-        preampscale.set_increments(1, 0.1)
-        preampscale.set_size_request(35, 200)
-        preampscale.set_value(float(preamp))
-        preampscale.connect('value-changed', self.on_preampscale)
-        label = Gtk.Label(use_markup=True, label='<small>Preamp</small>')
-        preampscalevalue = Gtk.Label(use_markup=True,
-                                     label=str(preampscale.get_value()) + 'x')
-        self.grid.attach(label, 0, 0, 1, 1)
-        self.grid.attach(preampscale, 0, 1, 1, 2)
-        self.grid.attach(preampscalevalue, 0, 3, 1, 1)
-
-        # Separator between preamp and bands
-        separator = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-        self.grid.attach(separator, 1, 0, 1, 3)
-        # separator.show()
-
         # Equalizer bands
         global scale
         self.scales = {}
         self.labels = {}
         self.scalevalues = {}
-        for x in range(1, num_ladspa_controls + 1):
+        for x in range(num_ladspa_controls):
             scale = Gtk.Scale(orientation=Gtk.Orientation.VERTICAL,
                               draw_value=False, inverted=True, digits=1,
                               expand=True, visible=True)
@@ -366,7 +329,7 @@ class Equalizer(Gtk.ApplicationWindow):
             scale.set_range(float(ranges[0]), float(ranges[1]))
             scale.set_increments(1, 0.1)
             scale.set_size_request(35, 200)
-            scale.set_value(float(ladspa_controls[x - 1]))
+            scale.set_value(float(ladspa_controls[x]))
             scale.connect('value-changed', self.on_scale, x)
             FormatLabels(x)
             label = Gtk.Label(use_markup=True, visible=True,
@@ -375,9 +338,9 @@ class Equalizer(Gtk.ApplicationWindow):
             scalevalue = Gtk.Label(visible=True, use_markup=True,
                 label='<small>' + str(scale.get_value())  + '\ndB</small>')
             self.scalevalues[x] = scalevalue
-            self.grid.attach(label, x + 1, 0, 1, 1)
-            self.grid.attach(scale, x + 1, 1, 1, 2)
-            self.grid.attach(scalevalue, x + 1, 3, 1, 1)
+            self.grid.attach(label, x, 0, 1, 1)
+            self.grid.attach(scale, x, 1, 1, 2)
+            self.grid.attach(scalevalue, x, 3, 1, 1)
 
         action = Gio.SimpleAction.new('save', None)
         action.set_enabled(False)
