@@ -15,13 +15,7 @@ from gi.repository import Gtk, Gio, GLib
 
 import os, sys
 
-configdir = os.getenv('HOME') + '/.config/pulse'
-eqconfig = configdir + '/equalizerrc'
-eqconfig2 = configdir + '/equalizerrc.test'
-eqpresets = eqconfig + '.availablepresets'
-presetdir1 = configdir + '/presets'
-presetdir2 = '/usr/share/pulseaudio-equalizer/presets'
-
+from pulseeq.constants import *
 
 def GetSettings():
     global rawdata
@@ -44,12 +38,12 @@ def GetSettings():
 
     os.system('pulseaudio-equalizer interface.getsettings')
 
-    f = open(eqconfig, 'r')
+    f = open(CONFIG_FILE, 'r')
     rawdata = f.read().split('\n')
     f.close()
 
     rawpresets = {}
-    f = open(eqpresets, 'r')
+    f = open(PRESETS_FILE, 'r')
     rawpresets = f.read().split('\n')
     f.close()
     del rawpresets[len(rawpresets) - 1]
@@ -76,7 +70,7 @@ def GetSettings():
 
 def ApplySettings():
     print('Applying settings...')
-    f = open(eqconfig, 'w')
+    f = open(CONFIG_FILE, 'w')
     del rawdata[:]
     rawdata.append(str(ladspa_filename))
     rawdata.append(str(ladspa_name))
@@ -190,13 +184,13 @@ class Equalizer(Gtk.ApplicationWindow):
                 presetmatch = 1
 
         if presetmatch == 1:
-            if os.path.isfile(presetdir1 + '/' + preset + '.preset'):
-                f = open(presetdir1 + '/' + preset + '.preset', 'r')
+            if os.path.isfile(os.path.join(USER_PRESET_DIR, preset + '.preset')):
+                f = open(os.path.join(USER_PRESET_DIR, preset + '.preset'), 'r')
                 rawdata = f.read().split('\n')
                 f.close
                 self.lookup_action('remove').set_enabled(True)
-            elif os.path.isfile(presetdir2 + '/' + preset + '.preset'):
-                f = open(presetdir2 + '/' + preset + '.preset', 'r')
+            elif os.path.isfile(os.path.join(SYSTEM_PRESET_DIR, preset + '.preset')):
+                f = open(os.path.join(SYSTEM_PRESET_DIR, preset + '.preset'), 'r')
                 rawdata = f.read().split('\n')
                 f.close
             else:
@@ -248,7 +242,7 @@ class Equalizer(Gtk.ApplicationWindow):
         if preset == '' or presetmatch == 1:
             print('Invalid preset name')
         else:
-            f = open(presetdir1 + '/' + preset + '.preset', 'w')
+            f = open(os.path.join(USER_PRESET_DIR, preset + '.preset'), 'w')
 
             del rawdata[:]
             rawdata.append(str(ladspa_filename))
@@ -290,7 +284,7 @@ class Equalizer(Gtk.ApplicationWindow):
 
     def on_removepreset(self, action, param):
         global preset
-        os.remove(presetdir1 + '/' + preset + '.preset')
+        os.remove(os.path.join(USER_PRESET_DIR, preset + '.preset'))
 
         self.presetsbox.get_child().set_text('')
 
