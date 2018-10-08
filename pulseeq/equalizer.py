@@ -93,45 +93,22 @@ def ApplySettings():
 
     os.system('pulseaudio-equalizer interface.applysettings')
 
+class FrequencyLabel(Gtk.Label):
+    def __init__(self, frequency=None):
+        super(FrequencyLabel, self).__init__(visible=True, use_markup=True,
+                                             justify=Gtk.Justification.CENTER)
+        if frequency is not None:
+            self.set_frequency(frequency)
 
-def FormatLabels(x):
-    global c
-    global suffix
-    global whitespace1
-    global whitespace2
-
-    whitespace1 = ''
-    whitespace2 = ''
-
-    current_input = int(ladspa_inputs[x])
-    if current_input < 99:
-        a = current_input
+    def set_frequency(self, frequency):
+        frequency = float(frequency)
         suffix = 'Hz'
-    if current_input > 99 and current_input < 999:
-        a = current_input
-        suffix = 'Hz'
-    if current_input > 999 and current_input < 9999:
-        a = float(current_input) / 1000
-        suffix = 'KHz'
-    if current_input > 9999:
-        a = float(current_input) / 1000
-        suffix = 'KHz'
 
-    # Filter out unnecessary ".0" from ladspa_inputs
-    b = str(a)
-    if b[-2:] == '.0':
-        c = b[:-2]
-    else:
-        c = b
+        if frequency > 999:
+            frequency = frequency / 1000
+            suffix = 'KHz'
 
-    # Add whitespace formatting to ensure text is centered
-    if len(c) == 3 and len(suffix) == 2:
-        whitespace2 = ' '
-    if len(c) < 4 and len(suffix) == 3:
-        whitespace1 = ' '
-    if len(c) < 2 and len(suffix) == 3:
-        whitespace1 = '  '
-
+        self.set_label('<small>{0:g}\n{1}</small>'.format(frequency, suffix))
 
 @Gtk.Template(resource_path='/com/github/pulseaudio-equalizer-ladspa/Equalizer/ui/Equalizer.ui')
 class Equalizer(Gtk.ApplicationWindow):
@@ -207,8 +184,7 @@ class Equalizer(Gtk.ApplicationWindow):
             clearpreset = ''
             for i in range(num_ladspa_controls):
                 self.scales[i].set_value(float(ladspa_controls[i]))
-                FormatLabels(i)
-                self.labels[i].set_markup('<small>' + whitespace1 + c + '\n' + whitespace2 + suffix + '</small>')
+                self.labels[i].set_frequency(ladspa_inputs[i])
                 self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i])) + '\ndB</small>')
 
             # Set preset again due to interference from scale modifications
@@ -231,8 +207,7 @@ class Equalizer(Gtk.ApplicationWindow):
         self.presetsbox.get_child().set_text(preset)
         for i in range(num_ladspa_controls):
             self.scales[i].set_value(float(ladspa_controls[i]))
-            FormatLabels(i)
-            self.labels[i].set_markup('<small>' + whitespace1 + c + '\n' + whitespace2 + suffix + '</small>')
+            self.labels[i].set_frequency(ladspa_inputs[i])
             self.scalevalues[i].set_markup('<small>' + str(float(ladspa_controls[i])) + '\ndB</small>')
 
     def on_savepreset(self, action, param):
@@ -325,9 +300,7 @@ class Equalizer(Gtk.ApplicationWindow):
             scale.set_size_request(35, 200)
             scale.set_value(float(ladspa_controls[x]))
             scale.connect('value-changed', self.on_scale, x)
-            FormatLabels(x)
-            label = Gtk.Label(use_markup=True, visible=True,
-                label = '<small>' + whitespace1 + c + '\n'  + whitespace2 + suffix + '</small>')
+            label = FrequencyLabel(frequency = ladspa_inputs[x])
             self.labels[x] = label
             scalevalue = Gtk.Label(visible=True, use_markup=True,
                 label='<small>' + str(scale.get_value())  + '\ndB</small>')
