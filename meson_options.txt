@@ -1,0 +1,4 @@
+option('purelib',
+    type: 'string',
+    description : 'Custom python purelib path relative to prefix',
+)
