@@ -343,11 +343,12 @@ if [ "$1" = 'disable-config' ]; then
     mv "$CONFIG_DIR"/default.pa.noeq "$CONFIG_DIR"/default.pa
   fi
 
-  # If equalizer configuration is present, delete file
+  # If equalizer configuration is present, remove it (but keep the rest of the file intact)
   if [ -f "$CONFIG_DIR"/default.pa ]; then
     if [ "$(grep -m1 '### BEGIN: Equalized audio configuration' "$CONFIG_DIR"/default.pa)" = '### BEGIN: Equalized audio configuration' ]; then
-      echo "Equalizer definition detected, deleting '$CONFIG_DIR/default.pa'..."
-      rm "$CONFIG_DIR"/default.pa
+      echo "Equalizer definition detected, removing it from '$CONFIG_DIR/default.pa'..."
+      head -n -10 "$CONFIG_DIR"/default.pa > "$CONFIG_DIR"/default.pa.noeq
+      mv "$CONFIG_DIR"/default.pa.noeq "$CONFIG_DIR"/default.pa
     fi
   fi
 
