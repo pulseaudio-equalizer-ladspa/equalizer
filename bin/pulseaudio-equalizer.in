@@ -219,11 +219,10 @@ if [ "$1" = 'log' ]; then
   echo "PA_REAL_PREAMP=$PA_REAL_PREAMP"
 
   if [ -f "$CONFIG_DIR"/default.pa ]; then
-    tail -n7 "$CONFIG_DIR"/default.pa
+    tail -n9 "$CONFIG_DIR"/default.pa
   fi
 
-  echo '---'
-  echo ''
+  [ "$1" = "debug" ] && { echo "---"; echo ""; }
   exit
 fi
 
