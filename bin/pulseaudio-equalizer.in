@@ -142,8 +142,10 @@ if [ "$1" = 'debug' ]; then
   echo 'Please wait (approximate time: 25 seconds)...'
   sleep 3
   echo >"$LOG_NAME" 'State: Initial state'
-  echo >>"$LOG_NAME" '---'
-  "$SCRIPT_NAME" log >>"$LOG_NAME"
+  {
+    echo '---'
+    "$SCRIPT_NAME" log
+  } >>"$LOG_NAME"
 
   "$SCRIPT_NAME" disable-config >/dev/null
   pulseaudio -k
@@ -153,33 +155,41 @@ if [ "$1" = 'debug' ]; then
   "$SCRIPT_NAME" disable >/dev/null
   "$SCRIPT_NAME" disable-config >/dev/null
   sleep 3
-  echo >>"$LOG_NAME" 'State: Disabled [not saved]'
-  echo >>"$LOG_NAME" '---'
-  "$SCRIPT_NAME" log >>"$LOG_NAME"
+  {
+    echo 'State: Disabled [not saved]'
+    echo '---'
+    "$SCRIPT_NAME" log
+  } >>"$LOG_NAME"
 
   # Enabled/not saved
   "$SCRIPT_NAME" enable >/dev/null
   "$SCRIPT_NAME" disable-config >/dev/null
   sleep 3
-  echo >>"$LOG_NAME" 'State: Enabled [not saved]'
-  echo >>"$LOG_NAME" '---'
-  "$SCRIPT_NAME" log >>"$LOG_NAME"
+  {
+    echo 'State: Enabled [not saved]'
+    echo '---'
+    "$SCRIPT_NAME" log
+  } >>"$LOG_NAME"
 
   # Disabled/saved
   "$SCRIPT_NAME" disable >/dev/null
   "$SCRIPT_NAME" enable-config >/dev/null
   sleep 3
-  echo >>"$LOG_NAME" 'State: Disabled [saved]'
-  echo >>"$LOG_NAME" '---'
-  "$SCRIPT_NAME" log >>"$LOG_NAME"
+  {
+    echo 'State: Disabled [saved]'
+    echo '---'
+    "$SCRIPT_NAME" log
+  } >>"$LOG_NAME"
 
   # Enabled/saved
   "$SCRIPT_NAME" enable >/dev/null
   "$SCRIPT_NAME" enable-config >/dev/null
   sleep 3
-  echo >>"$LOG_NAME" 'State: Enabled [saved]'
-  echo >>"$LOG_NAME" '---'
-  "$SCRIPT_NAME" log >>"$LOG_NAME"
+  {
+    echo 'State: Enabled [saved]'
+    echo '---'
+    "$SCRIPT_NAME" log
+  } >>"$LOG_NAME"
 
   echo "Finished! Log created at $LOG_NAME."
   exit
