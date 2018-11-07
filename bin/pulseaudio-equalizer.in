@@ -294,8 +294,17 @@ if [ "$1" = 'enable-config' ]; then
 
   echo "Using configuration file '$CFG_SOURCE_FILE' as source..."
 
-  # Modify module-stream-restore line to disable cached sinks
-  sed 's/load-module module-stream-restore/load-module module-stream-restore restore_device=false/g' "$CFG_SOURCE_FILE" >"$CONFIG_DIR"/default.pa
+  # Modify module-stream-restore line to disable cached sinks  
+  # Ensure to only do this if 'restore_device=false' doesn't already exist  
+  _MOD_STREAM_RESTORE="load-module module-stream-restore"
+  _CACHED_SINKS="$_MOD_STREAM_RESTORE restore_device=false"
+  _CACHED_SINKS_DISABLED="$(grep -c "$_CACHED_SINKS" "$CFG_SOURCE_FILE")"
+  if [ "$_CACHED_SINKS_DISABLED" != 0 ]; then
+    cp "$CFG_SOURCE_FILE" "$CONFIG_DIR"/default.pa
+  else
+    sed "s/$_MOD_STREAM_RESTORE/$_MOD_STREAM_RESTORE restore_device=false/g" \
+      < "$CFG_SOURCE_FILE" > "$CONFIG_DIR"/default.pa
+  fi
 
   # Add module-ladspa-sink definition
   echo '' >>"$CONFIG_DIR"/default.pa
