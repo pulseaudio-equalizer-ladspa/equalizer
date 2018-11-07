@@ -307,18 +307,22 @@ if [ "$1" = 'enable-config' ]; then
   fi
 
   # Add module-ladspa-sink definition
-  echo '' >>"$CONFIG_DIR"/default.pa
-  echo "### BEGIN: Equalized audio configuration" >>"$CONFIG_DIR"/default.pa
-  echo "### Generated from: $SCRIPT_NAME" >>"$CONFIG_DIR"/default.pa
-  echo '.nofail' >>"$CONFIG_DIR"/default.pa
-  echo "load-module module-ladspa-sink sink_name=$PA_LADSPA_SINK sink_master=$PA_MASTER_SINK plugin=$PA_LADSPA_PLUGIN label=$PA_LADSPA_LABEL control=$PA_LADSPA_CONTROLS" >>"$CONFIG_DIR"/default.pa
+  {
+    echo
+    echo "### BEGIN: Equalized audio configuration"
+    echo "### Generated from: $SCRIPT_NAME"
+    echo '.nofail'
+    echo "load-module module-ladspa-sink sink_name=$PA_LADSPA_SINK sink_master=$PA_MASTER_SINK plugin=$PA_LADSPA_PLUGIN label=$PA_LADSPA_LABEL control=$PA_LADSPA_CONTROLS"
+  } >>"$CONFIG_DIR"/default.pa
 
   # Set LADSPA sink as default sink & set appropriate master sink (preamp) volume
-  echo "set-default-sink $PA_LADSPA_SINK" >>"$CONFIG_DIR"/default.pa
-  #echo "set-sink-volume $PA_MASTER_SINK $PA_REAL_PREAMP" >>"$CONFIG_DIR"/default.pa
-  echo "set-sink-mute $PA_MASTER_SINK 0" >>"$CONFIG_DIR"/default.pa
-  echo '.endif' >>"$CONFIG_DIR"/default.pa
-  echo '### END: Equalized audio configuration' >>"$CONFIG_DIR"/default.pa
+  {
+    echo "set-default-sink $PA_LADSPA_SINK"
+    #echo "set-sink-volume $PA_MASTER_SINK $PA_REAL_PREAMP"
+    echo "set-sink-mute $PA_MASTER_SINK 0"
+    echo '.endif'
+    echo '### END: Equalized audio configuration'
+  } >>"$CONFIG_DIR"/default.pa
 
   echo "Equalizer setting saved (enable-config)."
   echo "-------------------------------------"
