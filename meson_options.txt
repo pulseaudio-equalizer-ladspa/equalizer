@@ -1,3 +1,8 @@
+option('python',
+    type: 'string',
+    description : 'Python name or path to be used',
+)
+
 option('purelib',
     type: 'string',
     description : 'Custom python purelib path relative to prefix',
