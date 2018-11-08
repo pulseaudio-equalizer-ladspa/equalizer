@@ -7,7 +7,7 @@ constants_file = configure_file(
     configuration: constants_conf,
 )
 
-equalizer_sources = ['equalizer.py', constants_file]
+equalizer_sources = ['__init__.py', 'equalizer.py', constants_file]
 
 purelib_path = get_option('purelib')
 
