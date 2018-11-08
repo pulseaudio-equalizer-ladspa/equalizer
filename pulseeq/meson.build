@@ -11,7 +11,7 @@ equalizer_sources = ['__init__.py', 'equalizer.py', constants_file]
 
 purelib_path = get_option('purelib')
 
-if not (purelib_path == '')
+if not (purelib_option == '')
     install_data(equalizer_sources,
         install_dir: join_paths(purelib_path, modname)
     )

@@ -18,6 +18,14 @@ pythondir = python.get_path('purelib')
 pkgdatadir = join_paths(datadir, meson.project_name())
 appdir = join_paths(pythondir, modname)
 
+purelib_option = get_option('purelib')
+
+if not (purelib_option == '')
+    purelib_path = purelib_option
+else
+    purelib_path = python.get_install_dir()
+endif
+
 subdir('bin')
 subdir('data')
 subdir(modname)
