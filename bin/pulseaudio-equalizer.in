@@ -320,7 +320,7 @@ if [ "$1" = 'enable-config' ]; then
     echo "set-default-sink $PA_LADSPA_SINK"
     #echo "set-sink-volume $PA_MASTER_SINK $PA_REAL_PREAMP"
     echo "set-sink-mute $PA_MASTER_SINK 0"
-    echo '.endif'
+    echo '.fail'
     echo '### END: Equalized audio configuration'
   } >>"$CONFIG_DIR"/default.pa
 
