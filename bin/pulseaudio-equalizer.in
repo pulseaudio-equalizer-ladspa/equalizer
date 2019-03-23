@@ -49,7 +49,7 @@ if [ -f "$CONFIG_NAME" ]; then
   index=0
   while read -r line ; do
     MYARRAY[$index]="$line"
-    index=$(($index+1))
+    index=$((index+1))
   done < "$CONFIG_NAME"
 
   # Grab simple values
@@ -69,22 +69,22 @@ if [ -f "$CONFIG_NAME" ]; then
   current=10
   while [ $index -lt "$PA_NUM_LADSPA_INPUTS" ]; do
     RAWDATA1="$RAWDATA1 ${MYARRAY[$current]}"
-    index=$(($index+1))
-    current=$(($current+1))
+    index=$((index+1))
+    current=$((current+1))
   done
   # Convert spaces into commas
-  PA_LADSPA_CONTROLS=$(echo $RAWDATA1 | sed 's/ /,/g')
+  PA_LADSPA_CONTROLS="${RAWDATA1// /,}"
 
   # Unpack inputs from array
   index=0
-  current=$((10+$PA_NUM_LADSPA_INPUTS))
+  current=$((10+PA_NUM_LADSPA_INPUTS))
   while [ $index -lt "$PA_NUM_LADSPA_INPUTS" ]; do
     RAWDATA2="$RAWDATA2 ${MYARRAY[$current]}"
-    index=$(($index+1))
-    current=$(($current+1))
+    index=$((index+1))
+    current=$((current+1))
   done
   # Convert spaces into commas
-  PA_LADSPA_INPUTS=$(echo $RAWDATA2 | sed 's/ /,/g')
+  PA_LADSPA_INPUTS="${RAWDATA2// /,}"
 fi
 
 # PyGTK Interface - Apply Settings
