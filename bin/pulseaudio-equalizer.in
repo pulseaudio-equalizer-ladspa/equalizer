@@ -21,10 +21,14 @@ PA_CONTROL_MAX='30'
 PA_PREAMP='1.0'
 PA_CURRENT_PRESET=''
 
-if [ -z "$XDG_CONFIG_HOME" ]; then
-  CONFIG_DIR="$HOME"/.config/pulse
+if [ "$PULSE_CONFIG" ]; then
+  CONFIG_DIR="$(dirname "$PULSE_CONFIG")"
 else
-  CONFIG_DIR="$XDG_CONFIG_HOME"/pulse
+  if [ -z "$XDG_CONFIG_HOME" ]; then
+    CONFIG_DIR="$HOME"/.config/pulse
+  else
+    CONFIG_DIR="$XDG_CONFIG_HOME"/pulse
+  fi
 fi
 PRESET_DIR1="$CONFIG_DIR"/presets
 PRESET_DIR2="@pkgdatadir@"/presets
