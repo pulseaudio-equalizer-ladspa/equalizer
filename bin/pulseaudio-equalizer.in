@@ -23,10 +23,10 @@ PA_CURRENT_PRESET=''
 
 if [ "$PULSE_CONFIG" ]; then
   CONFIG_DIR="$(dirname "$PULSE_CONFIG")"
-elif [ -z "$XDG_CONFIG_HOME" ]; then
-  CONFIG_DIR="$HOME"/.config/pulse
-else
+elif [ "$XDG_CONFIG_HOME" ]; then
   CONFIG_DIR="$XDG_CONFIG_HOME"/pulse
+else
+  CONFIG_DIR="$HOME"/.config/pulse
 fi
 PRESET_DIR1="$CONFIG_DIR"/presets
 PRESET_DIR2="@pkgdatadir@"/presets
