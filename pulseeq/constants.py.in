@@ -2,11 +2,10 @@ import os
 
 if 'PULSE_CONFIG' in os.environ:
     CONFIG_DIR = os.path.dirname(os.getenv('PULSE_CONFIG'))
+elif 'XDG_CONFIG_HOME' in os.environ:
+    CONFIG_DIR = os.path.join(os.getenv('XDG_CONFIG_HOME'), 'pulse')
 else:
-    if 'XDG_CONFIG_HOME' in os.environ:
-        CONFIG_DIR = os.path.join(os.getenv('XDG_CONFIG_HOME'), 'pulse')
-    else:
-        CONFIG_DIR = os.path.join(os.getenv('HOME'), '.config', 'pulse')
+    CONFIG_DIR = os.path.join(os.getenv('HOME'), '.config', 'pulse')
 CONFIG_FILE = os.path.join(CONFIG_DIR, 'equalizerrc')
 PRESETS_FILE = os.path.join(CONFIG_DIR, 'equalizerrc.availablepresets')
 USER_PRESET_DIR = os.path.join(CONFIG_DIR, 'presets')
