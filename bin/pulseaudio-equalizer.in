@@ -21,8 +21,8 @@ PA_CONTROL_MAX='30'
 PA_PREAMP='1.0'
 PA_CURRENT_PRESET=''
 
-if [ "$PULSE_CONFIG" ]; then
-  CONFIG_DIR="$(dirname "$PULSE_CONFIG")"
+if [ "$PULSE_CONFIG_PATH" ]; then
+  CONFIG_DIR="$PULSE_CONFIG_PATH"
 elif [ "$XDG_CONFIG_HOME" ]; then
   CONFIG_DIR="$XDG_CONFIG_HOME"/pulse
 else
