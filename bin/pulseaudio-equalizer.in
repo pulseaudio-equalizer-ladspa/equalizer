@@ -74,8 +74,10 @@ if [ -f "$CONFIG_NAME" ]; then
     index=$((index+1))
     current=$((current+1))
   done
+  # trim first space
+  trimmed=$(echo $RAWDATA1 | sed 's/ *$//g')
   # Convert spaces into commas
-  PA_LADSPA_CONTROLS="${RAWDATA1// /,}"
+  PA_LADSPA_CONTROLS="${trimmed// /,}"
 
   # Unpack inputs from array
   index=0
@@ -85,8 +87,10 @@ if [ -f "$CONFIG_NAME" ]; then
     index=$((index+1))
     current=$((current+1))
   done
+  # trim first space
+  trimmed=$(echo $RAWDATA2 | sed 's/ *$//g')
   # Convert spaces into commas
-  PA_LADSPA_INPUTS="${RAWDATA2// /,}"
+  PA_LADSPA_INPUTS="${trimmed// /,}"
 fi
 
 # PyGTK Interface - Apply Settings
