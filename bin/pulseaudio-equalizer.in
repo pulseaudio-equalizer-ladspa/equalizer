@@ -75,7 +75,7 @@ if [ -f "$CONFIG_NAME" ]; then
     current=$((current+1))
   done
   # trim first space
-  read  -rd '' trimmed <<< "$RAWDATA1"
+  trimmed=$(echo $RAWDATA1 | sed 's/ *$//g')
   # Convert spaces into commas
   PA_LADSPA_CONTROLS="${trimmed// /,}"
 
@@ -88,7 +88,7 @@ if [ -f "$CONFIG_NAME" ]; then
     current=$((current+1))
   done
   # trim first space
-  read  -rd '' trimmed <<< "$RAWDATA2"
+  trimmed=$(echo $RAWDATA2 | sed 's/ *$//g')
   # Convert spaces into commas
   PA_LADSPA_INPUTS="${trimmed// /,}"
 fi
