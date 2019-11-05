@@ -6,6 +6,26 @@
 # Intended for use in conjunction with PulseAudio Equalizer (pulseaudio-equalizer.py/pulseaudio-equalizer-gtk) PyGTK script.
 #
 
+get_range_of_values() {
+	# get range of values from array and return them as formated string
+	local current=$1
+	local -n ref=$2
+
+	local index=0
+	local rawdata=""
+	
+	while [ $index -lt "$PA_NUM_LADSPA_INPUTS" ]; do
+		rawdata="$rawdata ${MYARRAY[$current]}"
+		index=$((index+1))
+		current=$((current+1))
+	done
+	
+	# trim first space
+	trimmed=${rawdata# }
+	# Convert spaces into commas
+	ref="${trimmed// /,}"
+}
+
 # Don't execute the script with elevated privileges
 [[ $EUID = 0 ]] && { echo "This script must not be run as root!"; exit 1; }
 
@@ -31,7 +51,7 @@ fi
 PRESET_DIR1="$CONFIG_DIR"/presets
 PRESET_DIR2="@pkgdatadir@"/presets
 SCRIPT_NAME=pulseaudio-equalizer
-SCRIPT_VERSION='4.0 (29.01.2017)'
+SCRIPT_VERSION='4.1 (04.11.2019)'
 CONFIG_NAME="$CONFIG_DIR"/equalizerrc
 LOG_NAME="$HOME"/pulseaudio-equalizer.log
 
@@ -66,31 +86,11 @@ if [ -f "$CONFIG_NAME" ]; then
   PA_CONTROL_MAX=${MYARRAY[8]}
   PA_NUM_LADSPA_INPUTS=${MYARRAY[9]}
 
-  # Unpack controls from array
-  index=0
   current=10
-  while [ $index -lt "$PA_NUM_LADSPA_INPUTS" ]; do
-    RAWDATA1="$RAWDATA1 ${MYARRAY[$current]}"
-    index=$((index+1))
-    current=$((current+1))
-  done
-  # trim first space
-  trimmed=$(echo $RAWDATA1 | sed 's/ *$//g')
-  # Convert spaces into commas
-  PA_LADSPA_CONTROLS="${trimmed// /,}"
+  get_range_of_values $current PA_LADSPA_CONTROLS
 
-  # Unpack inputs from array
-  index=0
-  current=$((10+PA_NUM_LADSPA_INPUTS))
-  while [ $index -lt "$PA_NUM_LADSPA_INPUTS" ]; do
-    RAWDATA2="$RAWDATA2 ${MYARRAY[$current]}"
-    index=$((index+1))
-    current=$((current+1))
-  done
-  # trim first space
-  trimmed=$(echo $RAWDATA2 | sed 's/ *$//g')
-  # Convert spaces into commas
-  PA_LADSPA_INPUTS="${trimmed// /,}"
+  current=$((current+PA_NUM_LADSPA_INPUTS))
+  get_range_of_values $current PA_LADSPA_INPUTS
 fi
 
 # PyGTK Interface - Apply Settings
