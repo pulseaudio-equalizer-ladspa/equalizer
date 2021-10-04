@@ -6,6 +6,9 @@
 # Intended for use in conjunction with PulseAudio Equalizer (pulseaudio-equalizer.py/pulseaudio-equalizer-gtk) PyGTK script.
 #
 
+# Don't execute the script with elevated privileges
+[[ $EUID = 0 ]] && { echo "This script must not be run as root!"; exit 1; }
+
 # Default LADSPA plugin & control settings; settings will be overridden if $CONFIG_NAME file exists.
 PA_LADSPA_PLUGIN="mbeq_1197"
 PA_LADSPA_PLUGIN_NAME="Multiband EQ"
@@ -24,12 +27,6 @@ SCRIPT_NAME=pulseaudio-equalizer
 SCRIPT_VERSION="4.0 (29.01.2017)"
 CONFIG_NAME=$HOME/.config/pulse/equalizerrc
 LOG_NAME=$HOME/pulseaudio-equalizer.log
-
-# Don't execute the script with elevated privileges
-if [[ ! $EUID -ne 0 ]]; then
-   echo "This script must not be run as root!" 1>&2
-   exit 1
-fi
 
 # PyGTK Interface - Reset Settings
 if [ "$1" = "interface.resetsettings" ]; then

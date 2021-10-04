@@ -4,4 +4,5 @@
 # Author: Conn O'Griofa <connogriofa AT gmail DOT com>
 # Version: (see '/usr/pulseaudio-equalizer' script)
 
-python3 /usr/share/pulseaudio-equalizer/pulseaudio-equalizer.py
+#python3 /usr/share/pulseaudio-equalizer/pulseaudio-equalizer.py
+python3 ../share/pulseaudio-equalizer/pulseaudio-equalizer.py
