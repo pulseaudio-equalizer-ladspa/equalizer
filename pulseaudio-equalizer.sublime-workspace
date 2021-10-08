@@ -1,0 +1,394 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"to",
+				"today_pulses"
+			],
+			[
+				"name",
+				"nameserver"
+			],
+			[
+				"range",
+				"range_dates"
+			],
+			[
+				"ale",
+				"alert"
+			],
+			[
+				"al",
+				"alerts"
+			],
+			[
+				"o",
+				"offence_id"
+			],
+			[
+				"en",
+				"endpoint"
+			],
+			[
+				"users",
+				"users_list"
+			],
+			[
+				"user",
+				"user_localtion"
+			],
+			[
+				"mail",
+				"mail_nickname"
+			],
+			[
+				"ur",
+				"user_principal_name"
+			],
+			[
+				"ob",
+				"object_id"
+			],
+			[
+				"Client",
+				"client_id"
+			],
+			[
+				"para",
+				"parameters"
+			],
+			[
+				"co",
+				"columnType"
+			],
+			[
+				"Ass",
+				"AssetID"
+			],
+			[
+				"se",
+				"severityLevel"
+			],
+			[
+				"va",
+				"valueToCheck"
+			],
+			[
+				"file",
+				"fileToCheck"
+			],
+			[
+				"ar",
+				"arguments"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 136.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/lm/.themes/xfwm-theme-breeze-orange/xfwm4/themerc",
+		"/home/lm/Downloads/swimalne case 9222 notes.txt",
+		"/home/lm/Downloads/check_archer.txt",
+		"/home/lm/Documents/TD/stratosphere-swimlane/Access to nodes ssh.txt",
+		"/home/lm/Downloads/swimlane case 9331 notes.txt",
+		"/home/lm/Documents/TD/Proyectos/Banorte-Antiphishing-dmarc/Configuración de integraciones.txt",
+		"/home/lm/Downloads/conta/list.txt",
+		"/home/lm/Downloads/output-20210903.txt",
+		"/home/lm/Documents/TD/Proyectos/BanRegio-archer/Produccion abril 21/hosts extractions XLST modificado.txt",
+		"/home/lm/Documents/TD/Proyectos/get record.txt",
+		"/home/lm/Downloads/20210907-log",
+		"/home/lm/Documents/TD/Proyectos/BanRegio-archer/Control de cambio Explitability/Referencia de campos.txt",
+		"/home/lm/Dev/2019 KL Feed Downloader with PDNS support v.2/download_feeds ReadMe.txt",
+		"/home/lm/Dev/2019 KL Feed Downloader with PDNS support v.2/download_feeds_py36.py",
+		"/home/lm/Documents/TD/Proyectos/BanRegio-archer/Control de cambio Explitability/tranformation_original.xlst",
+		"/home/lm/Documents/TD/Proyectos/BanRegio-archer/Control de cambio Explitability/tranformation.xlst",
+		"/home/lm/Downloads/response_250000_300000.xml",
+		"/home/lm/Documents/TD/stratosphere-swimlane/volume-standar-default-10gi.yaml",
+		"/home/lm/Documents/TD/stratosphere-swimlane/swimlane-default-storageclass.yaml",
+		"/home/lm/Documents/TD/stratosphere-swimlane/standar-xfs-storageclass.yaml",
+		"/home/lm/Documents/TD/stratosphere-swimlane/standard-storageclass.yaml",
+		"/home/lm/Downloads/Vuln_Library_Dev/es-MX/Translation.xml.0006",
+		"/home/lm/Documents/TD/stratosphere-swimlane/loadbalancer.yaml",
+		"/home/lm/Documents/TD/Proyectos/zzz-proyectos cerrados/Intsights-FEMSA/datos varios.txt",
+		"/home/lm/Documents/TD/stratosphere-swimlane/secret-tls-swimlane.yaml",
+		"/home/lm/Documents/TD/stratosphere-swimlane/ingress-tls-swimlane.yaml",
+		"/home/lm/Downloads/DigiCertGlobalRootCA.pem",
+		"/home/lm/Downloads/Thawte_RSA_CA_2018.pem",
+		"/home/lm/Documents/TD/InfraesructuraIT/Certificado wilcard 2020-2022/trustdimension.key",
+		"/home/lm/Documents/TD/InfraesructuraIT/Certificado wilcard 2020-2022/trustdimension.pem",
+		"/home/lm/Documents/TD/InfraesructuraIT/Certificado wilcard 2020-2022/trustdimension-chain.crt",
+		"/home/lm/Downloads/ThawtePCA.crt.pem",
+		"/home/lm/Downloads/ThawtePCA-G2.crt.pem",
+		"/home/lm/Downloads/ThawtePCA-G3.crt.pem",
+		"/home/lm/Downloads/ThawteRSACA2018.crt.pem",
+		"/home/lm/Downloads/DigiCertTrustedRootG4.crt.pem",
+		"/home/lm/Downloads/DigiCertGlobalRootCA.crt.pem",
+		"/home/lm/Downloads/DigiCertGlobalRootCA.crt",
+		"/home/lm/Downloads/DigiCertTrustedRootG4.crt",
+		"/home/lm/Documents/TD/InfraesructuraIT/Certificado wilcard 2020-2022/trustdimension.der",
+		"/home/lm/Documents/TD/InfraesructuraIT/Certificado wilcard 2020-2022/trustdimension.crt",
+		"/home/lm/Documents/TD/InfraesructuraIT/Certificado wilcard 2020-2022/trustdimension.pfx",
+		"/home/lm/Documents/TD/stratosphere-swimlane/ingress-swimlane.yaml",
+		"/home/lm/Documents/TD/InfraesructuraIT/Certificado trustdimensin.com 2020-2021/trustdimension.com/fff05fdf478c1a7d.crt",
+		"/home/lm/Documents/TD/InfraesructuraIT/Certificado trustdimensin.com 2020-2021/trustdimension.com/fff05fdf478c1a7d.pem",
+		"/home/lm/Documents/TD/stratosphere-swimlane/credenciales swimlane k8i.txt",
+		"/home/lm/Documents/TD/Proyectos/swimlane_td_upgrade/notas update 10.4.0.txt",
+		"/home/lm/Documents/Resources/Swimlane/Plug-ins code/swimlane-10.1.3-py2.py3-none-any.whl_FILES/swimlane/core/client.py",
+		"/home/lm/.cache/.fr-wDVPH1/Archer - Get Record Fork.py",
+		"/home/lm/Documents/Resources/Swimlane/Plug-ins code/sw_rsa_archer-2.4.0-linux.dev.swimbundle_FILES/sw_rsa_archer-2.4.0-py3-none-any.whl_FILES/sw_rsa_archer/__init__.py",
+		"/home/lm/Documents/Resources/Swimlane/Plug-ins code/swimlane-10.4.0-py2.py3-none-any.whl_FILES/swimlane/core/client.py",
+		"/home/lm/Downloads/tblAsyncJobQueue.csv",
+		"/home/lm/Documents/TD/Proyectos/articulos blog trust dimension/Python y la Cyberseguridad como sacarle provecho.txt",
+		"/home/lm/Documents/Resources/Swimlane/Plug-ins code/sw_rsa_archer-2.4.0-linux.dev.swimbundle_FILES/imports/rsa_archer_get_record.py",
+		"/home/lm/Downloads/sw_ibm_xforce_2.1.1.swimbundle_FILES/imports/xforce_malware.py",
+		"/home/lm/Downloads/error gb-ib-plugin.txt",
+		"/home/lm/Downloads/sw_ibm_xforce_2.1.1.swimbundle_FILES/imports/xforce_malware.json",
+		"/home/lm/Documents/TD/stratosphere-swimlane/volume-standar-xfs-500gi.yaml",
+		"/home/lm/Documents/TD/stratosphere-swimlane/storage-class.yaml",
+		"/home/lm/Documents/TD/stratosphere-swimlane/volume-standar-xfs-1000gi.yaml",
+		"/home/lm/Downloads/sw_rsa_archer-2.4.0-linux.dev.swimbundle_FILES/imports/rsa_archer_test_connection.py",
+		"/home/lm/Downloads/rsa Archer Test Connection.py",
+		"/home/lm/Downloads/archer sesion output.txt",
+		"/home/lm/Downloads/swimlane-10.4.0-py2.py3-none-any.whl_FILES/swimlane/core/client.py",
+		"/home/lm/Downloads/swimlane-10.2.1-py2.py3-none-any.whl_FILES/swimlane/core/client.py",
+		"/home/lm/Downloads/swimlane-10.1.3-py2.py3-none-any.whl_FILES/swimlane/core/client.py",
+		"/home/lm/Downloads/swimlane-10.1.3-py2.py3-none-any.whl_FILES/swimlane/__init__.py",
+		"/home/lm/Downloads/sw_rsa_archer-2.4.0-linux.dev.swimbundle_FILES/sw_rsa_archer-2.4.0-py3-none-any.whl_FILES/sw_rsa_archer/__init__.py",
+		"/home/lm/Downloads/swimlane-10.1.3-py2.py3-none-any.whl_FILES/swimlane/core/__init__.py",
+		"/home/lm/Downloads/sw_intsights_threat_command_1.0.1.swimbundle_FILES/sw_intsights_threat_command-1.0.1-py2-none-any.whl_FILES/sw_intsights_threat_command/__init__.py",
+		"/home/lm/Documents/MITRE ATTCK/The Absolute Beginners Guide to MITRE ATTCK exam.txt",
+		"/home/lm/Documents/Avante/scripts/respaldos jpacheco.sh",
+		"/home/lm/Documents/Resources/Swimlane/Swimelane resources.txt",
+		"/home/lm/Documents/TD/swimelane/used_nfs_space.sh",
+		"/home/lm/Downloads/sw_check_point_r80_1.0.1.swimbundle_FILES/sw_check_point_r80-1.0.1-py2-none-any.whl_FILES/sw_check_point_r80/__init__.py",
+		"/home/lm/Downloads/get_version_task.py",
+		"/home/lm/Downloads/terminal_20210722.txt",
+		"/home/lm/Documents/TD/Proyectos/swimlane_td_upgrade/datos de swimlane windows 10.13.txt",
+		"/home/lm/Dev/ReadImage-python/imageread.py",
+		"/home/lm/Downloads/log_erros_20210721.txt",
+		"/home/lm/.cache/.fr-UO17Km/imports/urlscan.io_get_quota_details.py",
+		"/home/lm/.cache/.fr-r7XhnY/sw_urlscan_io/__init__.py",
+		"/home/lm/Documents/TD/Proyectos/swimlane_td_upgrade/instalacion server -13 swimlane v10.3 linux SPI.txt",
+		"/home/lm/Documents/TD/Proyectos/BanRegio-archer/ArcherDev Nuevo/Usuario y contraseñas.txt",
+		"/home/lm/Dev/AlienVaoult_otx/pulses_import.py",
+		"/home/lm/Dev/Picus_api_python/output.json",
+		"/home/lm/Downloads/sw_alienvault_otx_2.2.2.swimbundle_FILES/sw_alienvault_otx-2.2.2-py2-none-any.whl_FILES/sw_alienvault_otx/__init__.py",
+		"/home/lm/Dev/AlienVaoult_otx/output.txt",
+		"/home/lm/Dev/AlienVaoult_otx/cli_example.py",
+		"/home/lm/Dev/Picus_api_python/api_picus.py",
+		"/home/lm/Documents/validacon de banregio 070721.txt",
+		"/home/lm/.cache/.fr-7A9oaY/quickstart-prep.py",
+		"/home/lm/Downloads/velero_restore_logs.txt",
+		"/home/lm/Downloads/term_output.txt",
+		"/home/lm/Dev/archer_python/Archer - Update Record Fork.py",
+		"/home/lm/Dev/archer_python/Archer - Create Record Fork.py",
+		"/home/lm/Dev/archer_python/Archer - Get Record Fork.py",
+		"/home/lm/Dev/CheckpointPorAPI-python/get_alerts.py",
+		"/home/lm/Dev/MISP/create_event.py",
+		"/home/lm/Dev/Picus_api_python/assessed_threats.py",
+		"/home/lm/Documents/TD/Proyectos/BanRegio-archer/ArcherDev Nuevo/configuraciones de datafeeds.txt",
+		"/home/lm/Dev/archer_python/archer.py",
+		"/home/lm/Downloads/sw_rsa_archer-2.3.0-linux.dev.swimbundle_FILES/sw_rsa_archer-2.3.0-py3-none-any.whl_FILES/sw_rsa_archer/__init__.py",
+		"/home/lm/Downloads/MICH.csv",
+		"/home/lm/Downloads/response_300000_400000.xml",
+		"/home/lm/Downloads/response_600000_700000.xml",
+		"/home/lm/Dev/coinsignals/panel/admin.py",
+		"/home/lm/Dev/coinsignals/updater/updater.py",
+		"/home/lm/Dev/coinsignals/updater/apps.py",
+		"/home/lm/Dev/coinsignals/updater/scheduler.py",
+		"/home/lm/Documents/TD/Proyectos/swimlane_td_upgrade/treas de upgrade swimlane y banorte fase 2.txt",
+		"/home/lm/Documents/Resources/Swimlane/Swimlane 10.2.0 Install Linux Centos 7.8 2003.txt",
+		"/home/lm/Documents/TD/Proyectos/swimlane_td_upgrade/instalacion s10.2.2 linux SPI.txt",
+		"/home/lm/Dev/coinsignals/panel/models.py",
+		"/home/lm/Dev/coinsignals/coinsignals/settings_sample.py",
+		"/home/lm/Dev/coinsignals/panel/templates/panel/sidebar.html",
+		"/home/lm/Dev/coinsignals/panel/views.py",
+		"/home/lm/Dev/coinsignals/coinsignals/settings.py",
+		"/home/lm/Dev/coinsignals/config..ini",
+		"/home/lm/Downloads/untitled.html",
+		"/home/lm/Dev/intsights tip api/resut.txt",
+		"/home/lm/Downloads/urls para update kb.txt",
+		"/home/lm/Documents/TD/Proyectos/BanRegio-archer/ArcherDev Nuevo/Formula Priorzacion Archer Trust.txt",
+		"/home/lm/Documents/Avante/Macropro/cargas prn/COE.csv",
+		"/home/lm/Downloads/dnsrecon.py",
+		"/home/lm/Downloads/test.html",
+		"/home/lm/Documents/Avante/Macropro/cargas prn/CNEG.csv",
+		"/home/lm/Documents/Avante/Macropro/cargas prn/CEMO.csv"
+	],
+	"find":
+	{
+		"height": 26.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 108.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/Python/Python.sublime-build",
+	"project": "pulseaudio-equalizer.sublime-project",
+	"replace":
+	{
+		"height": 48.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 182.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
