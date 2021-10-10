@@ -198,6 +198,7 @@ class Equalizer(Gtk.ApplicationWindow):
 
     window_about = Gtk.Template.Child('About')
     window_title: Gtk.Label = Gtk.Template.Child('title')
+    window_save = Gtk.Template.Child('Save_dialog')
 
     def on_scale(self, widget, y):
         global ladspa_controls
@@ -426,6 +427,20 @@ class Equalizer(Gtk.ApplicationWindow):
     def on_about_close(self, widget):
         self.window_about.hide()
 
+    @Gtk.Template.Callback()
+    def on_save(self, widget):
+        result = self.window_save.run()
+        print(result)
+        if result == -6 or result == -4 :
+            self.window_save.hide()
+        elif result == Gtk.ResponseType.ACCEPT :
+            #save new preset 
+            self.window_save.hide()
+
+    @Gtk.Template.Callback()
+    def on_save_close(self, widget):
+        self.window_save.hide()
+
     def __init__(self, *args, **kwargs):
         super(Equalizer, self).__init__(*args, **kwargs)
         global headerbar
@@ -482,6 +497,14 @@ class Equalizer(Gtk.ApplicationWindow):
         action = Gio.SimpleAction.new('save', None)
         #action.set_enabled(False)
         action.connect('activate', self.on_savepreset)
+        self.add_action(action)
+
+        action = Gio.SimpleAction.new('on_save', None)
+        action.connect('activate', self.on_save)
+        self.add_action(action)
+
+        action = Gio.SimpleAction.new('save_close', None)
+        action.connect('activate', self.on_save_close)
         self.add_action(action)
 
         action = Gio.SimpleAction.new('remove', None)
