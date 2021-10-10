@@ -2,6 +2,74 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkAboutDialog" id="About">
+    <property name="can_focus">False</property>
+    <property name="modal">True</property>
+    <property name="type_hint">dialog</property>
+    <property name="program_name">Pulseaudio Equalizer</property>
+    <property name="version">2021.11</property>
+    <property name="copyright" translatable="yes">
+Copyleft (ɔ) 2018 - 2021 
+by Luis Armando Medina Avitia. &lt;lamedina@gmail.com&gt;
+México
+</property>
+    <property name="comments" translatable="yes">A simple pulseaudio equalizer for Gnome
+Enjoy this multiband equalizer to get a better sound 
+when you use PulseAudio</property>
+    <property name="website">https://www.comoinstalarlinux.com/pulseaudio-equalizer-ladspa/</property>
+    <property name="license" translatable="yes">This is pulse audio equalizer, written and maintained by
+Luis Armando Medina Avitia &lt;lamedina@gmail.com&gt;
+Project's Homepage: http://comoinstalarlinux.com/software
+ 
+Copyleft (ɔ) 2021 
+by Luis Armando Medina Avitia. &lt;lamedina@gmail.com&gt; 
+México
+ 
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 3, as
+published by the Free Software Foundation.
+ 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License with
+the Debian GNU/Linux distribution in file /usr/share/common-licenses/GPL-3;
+if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.</property>
+    <property name="authors">Luis Armando Medina Avitia https://github.com/larmedina75
+Filipe Laíns https://github.com/FFY00
+Conn O Griofa https://launchpad.net/~psyke83
+JuanJo Ciarlante https://github.com/jjo
+       </property>
+    <property name="logo_icon_name">multimedia-volume-control</property>
+    <signal name="close" handler="on_about_close" swapped="no"/>
+    <signal name="destroy" handler="on_about_close" swapped="no"/>
+    <child>
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="margin_right">10</property>
+        <property name="margin_bottom">10</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">-1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <template class="Equalizer" parent="GtkApplicationWindow">
     <property name="can_focus">False</property>
     <property name="icon_name">multimedia-volume-control</property>
@@ -12,7 +80,8 @@
         <property name="title">PulseAudio Equalizer</property>
         <property name="show_close_button">True</property>
         <child>
-          <object class="GtkButton">
+          <object class="GtkButton" id="savehdr">
+            <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="tooltip_text">Save current preset</property>
@@ -26,13 +95,11 @@
                 <property name="icon_name">document-save-symbolic</property>
               </object>
             </child>
-            <style>
-              <class name="suggested-action"/>
-            </style>
           </object>
         </child>
         <child>
-          <object class="GtkButton">
+          <object class="GtkButton" id="deletehdr">
+            <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
             <property name="tooltip_text">Remove current preset</property>
@@ -46,51 +113,51 @@
                 <property name="icon_name">user-trash-symbolic</property>
               </object>
             </child>
-            <style>
-              <class name="destructive-action"/>
-            </style>
           </object>
           <packing>
             <property name="position">1</property>
           </packing>
         </child>
-        <child>
-          <object class="GtkMenuButton">
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="margin_right">33</property>
-            <property name="popup">menu1</property>
-            <property name="direction">right</property>
+        <child type="title">
+          <object class="GtkGrid">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <child>
-              <object class="GtkImage">
+              <object class="GtkComboBoxText" id="presetsbox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_right">2</property>
-                <property name="margin_bottom">1</property>
-                <property name="stock">gtk-properties</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="has_entry">True</property>
+                <signal name="changed" handler="on_presetsbox" swapped="no"/>
+                <child internal-child="entry">
+                  <object class="GtkEntry">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                  </object>
+                </child>
               </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
             </child>
-          </object>
-          <packing>
-            <property name="position">3</property>
-          </packing>
-        </child>
-        <child type="title">
-          <object class="GtkComboBoxText" id="presetsbox">
-            <property name="can_focus">False</property>
-            <property name="halign">center</property>
-            <property name="valign">center</property>
-            <property name="has_entry">True</property>
-            <signal name="changed" handler="on_presetsbox" swapped="no"/>
-            <child internal-child="entry">
-              <object class="GtkEntry">
+            <child>
+              <object class="GtkLabel" id="title">
+                <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Pulseaudio Equalizer</property>
               </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+              </packing>
             </child>
           </object>
         </child>
         <child>
-          <object class="GtkSwitch">
+          <object class="GtkSwitch" id="activehdr">
+            <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="halign">center</property>
             <property name="valign">center</property>
@@ -98,7 +165,34 @@
           </object>
           <packing>
             <property name="pack_type">end</property>
-            <property name="position">2</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="menuhdr">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
+            <property name="margin_right">33</property>
+            <property name="popup">menu1</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Menu</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="margin_right">2</property>
+                <property name="margin_bottom">1</property>
+                <property name="stock">gtk-index</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>
@@ -110,7 +204,7 @@
         <property name="orientation">vertical</property>
         <property name="baseline_row">1</property>
         <child>
-          <object class="GtkMenuBar" id="menu">
+          <object class="GtkMenuBar" id="menustd">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -153,6 +247,17 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkImageMenuItem" id="about_headerbar">
+                        <property name="label">gtk-about</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="no_show_all">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_about_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkSeparatorMenuItem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -165,9 +270,7 @@
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Header bar  </property>
                         <property name="use_underline">True</property>
-                        <property name="active">True</property>
                         <signal name="toggled" handler="on_headerbarcheck" swapped="no"/>
-                        <accelerator key="F10" signal="activate"/>
                       </object>
                     </child>
                     <child>
@@ -260,12 +363,13 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem">
+                      <object class="GtkImageMenuItem" id="about">
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_about_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -295,24 +399,6 @@
             <child>
               <placeholder/>
             </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="left_attach">0</property>
@@ -320,7 +406,8 @@
           </packing>
         </child>
         <child>
-          <object class="GtkActionBar">
+          <object class="GtkActionBar" id="actionbar">
+            <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
               <object class="GtkButton">
@@ -335,45 +422,39 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSeparator">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-              </object>
-              <packing>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkComboBoxText" id="presetsbox1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">center</property>
                 <property name="valign">center</property>
                 <property name="has_entry">True</property>
+                <signal name="changed" handler="on_presetsbox" swapped="no"/>
                 <child internal-child="entry">
                   <object class="GtkEntry">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can_focus">False</property>
                   </object>
                 </child>
               </object>
               <packing>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSwitch">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-              </object>
-              <packing>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
               <placeholder/>
+            </child>
+            <child>
+              <object class="GtkSwitch" id="activestd">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="action_name">win.eqenabled</property>
+              </object>
+              <packing>
+                <property name="pack_type">end</property>
+                <property name="position">2</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -384,23 +465,52 @@
       </object>
     </child>
   </template>
-  <object class="GtkAboutDialog" id="about">
+  <object class="GtkDialog" id="save_dialog">
     <property name="can_focus">False</property>
+    <property name="modal">True</property>
     <property name="type_hint">dialog</property>
-    <property name="program_name">Glade</property>
-    <property name="logo_icon_name">image-missing</property>
     <child>
       <placeholder/>
     </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
+        <property name="margin_right">10</property>
+        <property name="margin_bottom">10</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="label">gtk-save</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -409,7 +519,50 @@
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkGrid">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">10</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="width_request">100</property>
+                <property name="height_request">80</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="label" translatable="yes">Preset name:</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="hexpand">False</property>
+                <property name="vexpand">False</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
         </child>
       </object>
     </child>

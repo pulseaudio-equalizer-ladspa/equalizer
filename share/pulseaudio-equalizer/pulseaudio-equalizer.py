@@ -64,6 +64,7 @@ def GetSettings():
     global presetmatch
     global clearpreset
     global boxindex
+    global headerbar
 
     print('Getting settings...')
 
@@ -79,6 +80,9 @@ def GetSettings():
     f.close()
     del rawpresets[len(rawpresets) - 1]
 
+    rawpresets = list(set(rawpresets))
+    rawpresets.sort()
+
     ladspa_filename = str(rawdata[0])
     ladspa_name = str(rawdata[1])
     ladspa_label = str(rawdata[2])
@@ -90,6 +94,7 @@ def GetSettings():
     num_ladspa_controls = int(rawdata[9])
     ladspa_controls = rawdata[10:10 + num_ladspa_controls]
     ladspa_inputs = rawdata[10 + num_ladspa_controls:10 + num_ladspa_controls + num_ladspa_controls]
+    #headerbar = int(rawdata[11])
 
     if status == 1:
         realstatus = 'Enabled'
@@ -130,6 +135,7 @@ def ApplySettings():
 
     for i in rawdata:
         f.write(str(i) + '\n')
+    #rawdata.append(str(headerbar))
     f.close()
 
     os.system('pulseaudio-equalizer interface.applysettings')
@@ -173,13 +179,25 @@ def FormatLabels(x):
     if len(c) < 2 and len(suffix) == 3:
         whitespace1 = '  '
 
-@Gtk.Template(filename='/home/lm/Dev/pulseaudio-equalizer-ladspa/share/pulseaudio-equalizer/equalizer.ui')
+@Gtk.Template(filename='../share/pulseaudio-equalizer/equalizer.ui')
 class Equalizer(Gtk.ApplicationWindow):
     __gtype_name__= "Equalizer"
 
     grid = Gtk.Template.Child()
-    presetsbox = Gtk.Template.Child()
     headerbarcheck: Gtk.CheckMenuItem = Gtk.Template.Child()
+    savehdr: Gtk.Button = Gtk.Template.Child()
+    deletehdr: Gtk.Button = Gtk.Template.Child()
+    menuhdr: Gtk.MenuButton = Gtk.Template.Child()
+    presetsbox = Gtk.Template.Child()
+    activehdr: Gtk.Switch = Gtk.Template.Child()
+    presetsbox1 = Gtk.Template.Child()
+    about_headerbar: Gtk.ImageMenuItem = Gtk.Template.Child()
+
+    menustd: Gtk.MenuBar = Gtk.Template.Child()
+    actionbar: Gtk.ActionBar = Gtk.Template.Child()
+
+    window_about = Gtk.Template.Child('About')
+    window_title: Gtk.Label = Gtk.Template.Child('title')
 
     def on_scale(self, widget, y):
         global ladspa_controls
@@ -190,6 +208,7 @@ class Equalizer(Gtk.ApplicationWindow):
         if clearpreset == 1:
             preset = ''
             self.presetsbox.get_child().set_text(preset)
+            self.presetsbox1.get_child().set_text(preset)
 
         self.scalevalues[y].set_markup('<small>' + str(float(ladspa_controls[y])) + '\ndB</small>')
 
@@ -207,13 +226,32 @@ class Equalizer(Gtk.ApplicationWindow):
     def on_headerbarcheck(self, widget, **_kwargs):
         assert self.headerbarcheck == widget
         #print(dir(widget))
-        if widget.get_active() :
-            print('activo')
+        if self.headerbarcheck.get_active() :
+            #print('activo')
+            self.savehdr.set_visible(True)
+            self.deletehdr.set_visible(True)
+            self.menuhdr.set_visible(True)
+            self.presetsbox.set_visible(True)
+            self.activehdr.set_visible(True)
+            self.menustd.set_visible(False)
+            self.actionbar.set_visible(False)
+            self.about_headerbar.set_visible(True)
+            self.window_title.set_visible(False)
+            
         else:
-            print('inactivo')
+            #print('inactivo')
+            self.savehdr.set_visible(False)
+            self.deletehdr.set_visible(False)
+            self.menuhdr.set_visible(False)
+            self.presetsbox.set_visible(False)
+            self.activehdr.set_visible(False)
+            self.menustd.set_visible(True)
+            self.actionbar.set_visible(True)
+            self.about_headerbar.set_visible(False)
+            self.window_title.set_visible(True)
+            
 
-    @Gtk.Template.Callback()
-    def on_presetsbox(self, widget):
+    def update_preset(self):
         global preset
         global presetmatch
         global clearpreset
@@ -223,7 +261,6 @@ class Equalizer(Gtk.ApplicationWindow):
         global num_ladspa_controls
         global ladspa_controls
         global ladspa_inputs
-        preset = self.presetsbox.get_child().get_text()
 
         self.lookup_action('remove').set_enabled(False)
 
@@ -263,12 +300,31 @@ class Equalizer(Gtk.ApplicationWindow):
             # Set preset again due to interference from scale modifications
             preset = str(rawdata[4])
             clearpreset = 1
-            self.presetsbox.get_child().set_text(preset)
+            if self.headerbarcheck.get_active() :
+                self.presetsbox.get_child().set_text(preset)
+            else:
+                self.presetsbox1.get_child().set_text(preset)
             ApplySettings()
 
-            self.lookup_action('save').set_enabled(False)
+            #self.lookup_action('save').set_enabled(False)
         else:
-            self.lookup_action('save').set_enabled(preset != '')
+            pass
+            #self.lookup_action('save').set_enabled(preset != '')
+
+
+    @Gtk.Template.Callback()
+    def on_presetsbox(self, widget):
+        global preset
+
+        if self.headerbarcheck.get_active() :
+            preset = self.presetsbox.get_child().get_text()
+            self.presetsbox1.get_child().set_text(preset)
+            self.update_preset()
+        else:
+            preset = self.presetsbox1.get_child().get_text()
+            self.presetsbox.get_child().set_text(preset)
+            self.update_preset()
+       
 
     def on_resetsettings(self, action=None, param=None):
         print('Resetting to defaults...')
@@ -278,6 +334,7 @@ class Equalizer(Gtk.ApplicationWindow):
         self.lookup_action('eqenabled').set_state(GLib.Variant('b', status))
         Gio.Application.get_default().lookup_action('keepsettings').set_state(GLib.Variant('b', persistence))
         self.presetsbox.get_child().set_text(preset)
+        self.presetsbox1.get_child().set_text(preset)
         for i in range(num_ladspa_controls):
             self.scales[i].set_value(float(ladspa_controls[i]))
             self.labels[i].set_frequency(ladspa_inputs[i])
@@ -286,6 +343,7 @@ class Equalizer(Gtk.ApplicationWindow):
     def on_savepreset(self, action, param):
         global preset
         global presetmatch
+        global presetmatch1
         preset = self.presetsbox.get_child().get_text()
         if preset == '' or presetmatch == 1:
             print('Invalid preset name')
@@ -310,6 +368,8 @@ class Equalizer(Gtk.ApplicationWindow):
 
             # Clear preset list from ComboBox
             self.presetsbox.remove_all()
+            self.presetsbox1.remove_all()
+
 
             # Apply settings (which will save new preset as default)
             ApplySettings()
@@ -320,6 +380,7 @@ class Equalizer(Gtk.ApplicationWindow):
             # Repopulate preset list into ComboBox
             for i in range(len(rawpresets)):
                 self.presetsbox.append_text(rawpresets[i])
+                self.presetsbox1.append_text(rawpresets[i])
 
             action.set_enabled(False)
             self.lookup_action('remove').set_enabled(True)
@@ -335,9 +396,11 @@ class Equalizer(Gtk.ApplicationWindow):
         os.remove(os.path.join(USER_PRESET_DIR, preset + '.preset'))
 
         self.presetsbox.get_child().set_text('')
+        self.presetsbox1.get_child().set_text('')
 
         # Clear preset list from ComboBox
         self.presetsbox.remove_all()
+        self.presetsbox1.remove_all()
 
         # Refresh (and therefore, sort) preset list
         GetSettings()
@@ -345,6 +408,7 @@ class Equalizer(Gtk.ApplicationWindow):
         # Repopulate preset list into ComboBox
         for i in range(len(rawpresets)):
             self.presetsbox.append_text(rawpresets[i])
+            self.presetsbox1.append_text(rawpresets[i])
 
         preset = ''
         # Apply settings
@@ -352,11 +416,44 @@ class Equalizer(Gtk.ApplicationWindow):
 
         action.set_enabled(False)
 
+    @Gtk.Template.Callback()
+    def on_about_activate(self, widget):
+        result = self.window_about.run()
+        if result == -4 :
+            self.window_about.hide()
+
+    @Gtk.Template.Callback()
+    def on_about_close(self, widget):
+        self.window_about.hide()
+
     def __init__(self, *args, **kwargs):
         super(Equalizer, self).__init__(*args, **kwargs)
+        global headerbar
         GetSettings()
 
         self.apply_event_source = None
+
+        headerbar = 0
+        if headerbar :
+            #print('activo')
+            self.savehdr.set_visible(True)
+            self.deletehdr.set_visible(True)
+            self.menuhdr.set_visible(True)
+            self.presetsbox.set_visible(True)
+            self.activehdr.set_visible(True)
+            self.menustd.set_visible(False)
+            self.actionbar.set_visible(False)
+            self.about_headerbar.set_visible(True)
+        else:
+            #print('inactivo')
+            self.savehdr.set_visible(False)
+            self.deletehdr.set_visible(False)
+            self.menuhdr.set_visible(False)
+            self.presetsbox.set_visible(False)
+            self.activehdr.set_visible(False)
+            self.menustd.set_visible(True)
+            self.actionbar.set_visible(True)
+            self.about_headerbar.set_visible(False)
 
         # Equalizer bands
         global scale
@@ -383,7 +480,7 @@ class Equalizer(Gtk.ApplicationWindow):
             self.grid.attach(scalevalue, x, 3, 1, 1)
 
         action = Gio.SimpleAction.new('save', None)
-        action.set_enabled(False)
+        #action.set_enabled(False)
         action.connect('activate', self.on_savepreset)
         self.add_action(action)
 
@@ -393,15 +490,26 @@ class Equalizer(Gtk.ApplicationWindow):
         self.add_action(action)
 
         self.presetsbox.get_child().set_text(preset)
+        self.presetsbox1.get_child().set_text(preset)
         for i in range(len(rawpresets)):
             self.presetsbox.append_text(rawpresets[i])
+            self.presetsbox1.append_text(rawpresets[i])
 
         action = Gio.SimpleAction.new_stateful('eqenabled', None,
                                                GLib.Variant('b', status))
         action.connect('change-state', self.on_eqenabled)
         self.add_action(action)
 
+        action = Gio.SimpleAction.new('about', None)
+        action.connect('activate', self.on_about_activate)
+        self.add_action(action)
+
+        action = Gio.SimpleAction.new('about_close', None)
+        action.connect('activate', self.on_about_close)
+        self.add_action(action)
+
         self.show()
+        
 
 class FrequencyLabel(Gtk.Label):
     def __init__(self, frequency=None):
@@ -452,10 +560,8 @@ class Application(Gtk.Application):
         self.add_action(action)
 
         action = Gio.SimpleAction.new('headerbarcheck', None)
-        action.connect('activate', self.on_headerbarcheck)
+        action.connect('activate', self.window.on_headerbarcheck)
         self.add_action(action)
-
-        #self.menuQuit.action.connect("activate", self.on_quit)
 
 
     def do_activate(self):
