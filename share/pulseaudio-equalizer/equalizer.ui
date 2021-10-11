@@ -320,6 +320,7 @@ JuanJo Ciarlante https://github.com/jjo
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_delete" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -480,6 +481,7 @@ JuanJo Ciarlante https://github.com/jjo
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
+                <accelerator key="Return" signal="clicked"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -520,7 +522,7 @@ JuanJo Ciarlante https://github.com/jjo
               </packing>
             </child>
             <child>
-              <object class="GtkEntry">
+              <object class="GtkEntry" id="new_preset">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="halign">center</property>
