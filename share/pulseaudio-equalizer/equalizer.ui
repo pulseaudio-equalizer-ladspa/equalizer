@@ -7,7 +7,7 @@
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">Pulseaudio Equalizer</property>
-    <property name="version">2021.11</property>
+    <property name="version">2021.10</property>
     <property name="copyright" translatable="yes">
 Copyleft (ɔ) 2018 - 2021 
 by Luis Armando Medina Avitia. &lt;lamedina@gmail.com&gt;
