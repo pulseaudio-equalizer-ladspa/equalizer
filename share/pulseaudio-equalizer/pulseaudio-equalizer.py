@@ -580,6 +580,120 @@ class Equalizer(Gtk.ApplicationWindow):
     def on_save_close(self, widget):
         self.window_save.hide()
 
+    @Gtk.Template.Callback()
+    def on_importpreset(self, widget):
+        global preset
+        global presets
+        global rawpresets
+
+        dialog = Gtk.FileChooserDialog('Import Preset...',
+                None, Gtk.FileChooserAction.OPEN, (Gtk.STOCK_CANCEL,
+                Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK))
+        dialog.set_default_response(Gtk.ResponseType.OK)
+
+        filter = Gtk.FileFilter()
+        filter.set_name('Preset files')
+        filter.add_pattern('*.preset')
+        dialog.add_filter(filter)
+        dialog.set_current_folder(presetdir1)
+        dialog.show()
+
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            filename = dialog.get_filename()
+            path_and_name = os.path.split(filename)
+            name = path_and_name[1]
+
+            print('Importing preset:',path_and_name)
+
+            if os.path.isfile(path_and_name[0] + '/' + path_and_name[1]):
+                f = open(path_and_name[0] + '/' + path_and_name[1], 'r')
+                rawdata = f.read().split('\n')
+                f.close
+
+                if rawdata[0] == "mbeq_1197"  and rawdata[1] == "mbeq" and rawdata[2] == "Multiband EQ" :
+                    os.system('cp -f "'+path_and_name[0] + '/' + path_and_name[1] + '" ' +presetdir1 )
+                    print("Preset imported successfully.")
+
+                    # Refresh (and therefore, sort) preset list
+                    GetSettings()
+
+                    # Repopulate preset list into ComboBox
+                    model1 = presetsbox1.get_model()
+                    presetsbox1.set_model(None)
+                    model1.clear()
+                    print(rawpresets)
+                    boxindex = 0
+                    for i in range(len(rawpresets)):
+                        model1.append( [rawpresets[i]] )
+                        if rawpresets[i] == rawdata[4]:
+                            boxindex = i
+                    presetsbox1.set_model(model1)
+                    presetsbox1.set_active(boxindex)
+
+        dialog.destroy()
+
+    @Gtk.Template.Callback()
+    def on_exportpreset(self, widget):
+        global preset
+        global presets
+        print('on_exportpreset')
+        dialog = Gtk.FileChooserDialog(title='Export Preset...',
+                                       parent=None, 
+                                       action=Gtk.FileChooserAction.SAVE)
+        dialog.add_buttons(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL)
+        dialog.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK)
+        dialog.set_default_response(Gtk.ResponseType.OK)
+
+        if len(str(preset)) > 0:
+            dialog.set_current_name(str(preset)+'.preset')
+
+        filter = Gtk.FileFilter()
+        filter.set_name('Preset files')
+        filter.add_pattern('*.preset')
+        dialog.add_filter(filter)
+        dialog.set_current_folder(presetdir1)
+        dialog.show()
+
+        response = dialog.run()
+        print(response)
+        if response == Gtk.ResponseType.OK:
+            filename = dialog.get_filename()
+            path_and_name = os.path.split(filename)
+            
+            print('Export to: ',path_and_name)
+
+            # Verify filename has a .preset extension
+            name = path_and_name[1]
+            if not '.preset' in path_and_name[1] :
+                name = path_and_name[1] + '.preset'
+
+            # Assign a name based on filename if preset is empty string
+            if len(str(preset)) < 1 :
+                preset = path_and_name[1]
+
+
+            # Save current configration to export as a .preset file
+            f = open(path_and_name[0] + '/' + name , 'w')
+
+            del rawdata[:]
+            rawdata.append(str(ladspa_filename))
+            rawdata.append(str(ladspa_name))
+            rawdata.append(str(ladspa_label))
+            rawdata.append(str(preamp))
+            rawdata.append(str(preset))
+            rawdata.append(str(num_ladspa_controls))
+            for i in range(num_ladspa_controls):
+                rawdata.append(str(ladspa_controls[i]))
+            for i in range(num_ladspa_controls):
+                rawdata.append(str(ladspa_inputs[i]))
+
+            for i in rawdata:
+                f.write(str(i) + '\n')
+            f.close()
+
+        dialog.destroy()
+
     def __init__(self, *args, **kwargs):
         super(Equalizer, self).__init__(*args, **kwargs)
         global headerbar
@@ -642,6 +756,14 @@ class Equalizer(Gtk.ApplicationWindow):
         action.connect('activate', self.on_savepreset)
         self.add_action(action)
 
+        action = Gio.SimpleAction.new('on_importpreset', None)
+        action.connect('activate', self.on_importpreset)
+        self.add_action(action)
+
+        action = Gio.SimpleAction.new('on_exportpreset', None)
+        action.connect('activate', self.on_exportpreset)
+        self.add_action(action)
+        
         action = Gio.SimpleAction.new('on_save', None)
         action.connect('activate', self.on_save)
         self.add_action(action)

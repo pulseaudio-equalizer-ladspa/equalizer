@@ -1,17 +1,17 @@
 # Maintainer: FFY00 <filipe.lains@gmail.com>
-pkgname=pulseaudio-equalizer-ladspa-ffy00-git
+pkgname=pulseaudio-equalizer-ladspa
 pkgver=1.0.r0.4856f57
 pkgrel=3
-pkgdesc="A 15-band equalizer for PulseAudio (FFY00's fork)"
+pkgdesc="A 15-band equalizer for PulseAudio"
 arch=(any)
-url="https://github.com/FFY00/pulseaudio-equalizer-ladspa"
+url="https://github.com/larmedina75/pulseaudio-equalizer-ladspa"
 license=('GPL3')
-depends=('pygtk' 'swh-plugins' 'gnome-icon-theme' 'pulseaudio' 'bc' 'python2-gobject')
+depends=('python-gobject' 'gtk3' 'swh-plugins' 'pulseaudio' 'bc')
 makedepends=('git')
 provides=('pulseaudio-equalizer-ladspa')
 conflicts=('pulseaudio-equalizer-ladspa')
 replaces=('pulseaudio-equalizer-ladspa')
-source=('remote::git+https://github.com/FFY00/pulseaudio-equalizer-ladspa')
+source=('remote::git+https://github.com/larmedina75/pulseaudio-equalizer-ladspa')
 md5sums=('SKIP')
 
 pkgver() {
@@ -20,8 +20,8 @@ pkgver() {
 }
 
 package() {
-  install -Dm644 "$srcdir/remote/equalizerrc" "$pkgdir/usr/equalizerrc"
+  install -Dm644 "$srcdir/equalizerrc" "$pkgdir/usr/equalizerrc"
 
-  cp -r "$srcdir/remote/share" "$pkgdir/usr/"
-  cp -r "$srcdir/remote/bin" "$pkgdir/usr/"
+  cp -r "$srcdir/share" "$pkgdir/usr/"
+  cp -r "$srcdir/bin" "$pkgdir/usr/"
 }
